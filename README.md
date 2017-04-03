@@ -2,6 +2,7 @@
 1. Open terminal
 2. Type in:    
 > sftp SSRL\\\\b\_heimann@specftp.slac.stanford.edu   
+
 then enter password   
 3. Commands: 
 
