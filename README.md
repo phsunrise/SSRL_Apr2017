@@ -4,6 +4,7 @@
     sftp SSRL\\\\b_heimann@specftp.slac.stanford.edu   
 then enter password   
 3. Commands: 
+
  pwd    | Print working directory of remote host
  lpwd   | Print working directory of local client
  cd     | Change directory on the remote host
