@@ -1,29 +1,36 @@
 import os, sys
 import numpy as np
 from orimat import orimat_calc, angs_phifix
+import ConfigParser 
 
-### settings ###
-mode = "1d" # "2d" or "1d"
-use_angles = True 
-do_test = True # 1d scan with 1s exposure time in test mode
-phi = 40.
-if use_angles: # need to define phi and orientation matrix
-    or0 = (67.2282, 34.727, 90.7624, 0.) # primary peak: tth, th, chi, phi
-    hkl0 = [2., 2., 0.]
-    or1 = (57.2956, 28.398, 145.085, 11.) # secondary peak
-    hkl1 = [1., 1., 2.]
+## parsing config file
+Config = ConfigParser.ConfigParser()
+Config.read(sys.argv[1])
+
+do_test = Config.getboolean("MODE", "do_test")
+mode = Config.get("MODE", "mode")
+use_angles = Config.getboolean("MODE", "use_angles")
+scanpath = Config.get("PATHS", "scanpath")
+imgpath = Config.get("PATHS", "imgpath")
+checkfile = Config.get("PATHS", "checkfile")
+newfile = Config.get("PATHS", "newfile")
+
+peak = np.array(Config.get("SCAN PARAMS", "peak").split(',')).astype(float)
+scandir = np.array(Config.get("SCAN PARAMS", "scandir").split(',')).astype(float)
+scandir_perp = np.array(Config.get("SCAN PARAMS", "scandir_perp").split(',')).astype(float)
+scanrange = Config.get("SCAN PARAMS", "scanrange").split(',')
+scanrange_perp = Config.get("SCAN PARAMS", "scanrange_perp").split(',')
+scanparams = [(float(scanrange[0]), float(scanrange[1]), int(scanrange[2])), \
+              (float(scanrange_perp[0]), float(scanrange_perp[1]), int(scanrange_perp[2]))]
+
+phi = float(Config.get("ANGLES", "phi"))
+if use_angles:
+    or0 = np.array(Config.get("ANGLES", "or0").split(',')).astype(float)
+    hkl0 = np.array(Config.get("ANGLES", "hkl0").split(',')).astype(float)
+    or1 = np.array(Config.get("ANGLES", "or1").split(',')).astype(float)
+    hkl1 = np.array(Config.get("ANGLES", "hkl1").split(',')).astype(float)
     orimat = orimat_calc(or0, hkl0, or1, hkl1)
-peak = [2,2,0]
-scandir = [1,1,0] # main scan direction
-scandir_perp = [0,0,1] # secondary direction perpendicular to scandir
-scanparams = [(-0.4, 0.4, 81), (-0.03, 0.03, 7)]
-    # range and stepsize parallel and perpendicular to the scan direction
-    # can change range according to motor range, but try to keep stepsize
-scanpath = "~/data/Apr2017/5dpa/???" # path for scan parameter file
-imgpath = "~/data/Apr2017/5dpa/Pilatus" # path to save image
-checkfile = "~/data/Apr2017/smacros/check.txt" # macro for checking
-newfile = "~/data/newfile" # dummy file to avoid overwrite
-### end of settings ###
+## END parsing
 
 if not do_test: # must read times from times.npy
     times = np.load("times.npy")
@@ -83,7 +90,7 @@ print "Path for scan parameter file:", scanpath
 print "Path to save image:", imgpath
 print "Macro for checking:", checkfile
 print ""
-val = raw_input("Parameter okay?")
+val = raw_input("Parameter okay? ")
 if not val in ['yes', 'y', 'Y']:
     print "Aborting..."
     sys.exit(1)
