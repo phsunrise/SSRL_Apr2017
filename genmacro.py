@@ -4,8 +4,12 @@ from orimat import orimat_calc, angs_phifix
 import ConfigParser 
 
 ## parsing config file
+if len(sys.argv) < 2:
+    config_filename = raw_input("Please enter config file name, enter q or ctrl+d to quit:\n")
+else:
+    config_filename = sys.argv[1]
 Config = ConfigParser.ConfigParser()
-Config.read(sys.argv[1])
+Config.read(config_filename)
 
 do_test = Config.getboolean("MODE", "do_test")
 mode = Config.get("MODE", "mode")
@@ -16,8 +20,8 @@ checkfile = Config.get("PATHS", "checkfile")
 newfile = Config.get("PATHS", "newfile")
 
 peak = np.array(Config.get("SCAN PARAMS", "peak").split(',')).astype(float)
-scandir = np.array(Config.get("SCAN PARAMS", "scandir").split(',')).astype(float)
-scandir_perp = np.array(Config.get("SCAN PARAMS", "scandir_perp").split(',')).astype(float)
+scandir_orig = np.array(Config.get("SCAN PARAMS", "scandir").split(',')).astype(float)
+scandir_perp_orig = np.array(Config.get("SCAN PARAMS", "scandir_perp").split(',')).astype(float)
 scanrange = Config.get("SCAN PARAMS", "scanrange").split(',')
 scanrange_perp = Config.get("SCAN PARAMS", "scanrange_perp").split(',')
 scanparams = [(float(scanrange[0]), float(scanrange[1]), int(scanrange[2])), \
@@ -44,8 +48,8 @@ else:
         print "Test mode... 1d scan only!"
         mode = "1d"
 peak = np.array(peak)
-scandir = np.array(scandir)/np.linalg.norm(scandir) 
-scandir_perp = np.array(scandir_perp)/np.linalg.norm(scandir_perp)
+scandir = np.array(scandir_orig)/np.linalg.norm(scandir_orig) 
+scandir_perp = np.array(scandir_perp_orig)/np.linalg.norm(scandir_perp_orig)
 macroname = "macro%s"%mode
 if use_angles:
     macroname += "_ang"
@@ -76,8 +80,8 @@ else:
     print "Using hkl values"
 print "\nPhifix mode, phi = %.3f" % phi
 print "Peak:", peak
-print "Scan direction:", scandir
-print "Perpendicular scan direction", scandir_perp
+print "Scan direction:", scandir_orig
+print "Perpendicular scan direction", scandir_perp_orig
 if mode == "1d":
     print "From %.3f to %.3f in %d steps" % (\
             scanparams[0][0], scanparams[0][1], scanparams[0][2])
@@ -90,7 +94,7 @@ print "Path for scan parameter file:", scanpath
 print "Path to save image:", imgpath
 print "Macro for checking:", checkfile
 print ""
-val = raw_input("Parameter okay? ")
+val = raw_input("Parameters okay? ")
 if not val in ['yes', 'y', 'Y']:
     print "Aborting..."
     sys.exit(1)
