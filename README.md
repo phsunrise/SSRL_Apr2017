@@ -1,11 +1,11 @@
 ## How to transfer data (using Mac)
 1. Open terminal
 2. Type in:    
-    sftp SSRL\\\\b_heimann@specftp.slac.stanford.edu   
+> sftp SSRL\\\\b\_heimann@specftp.slac.stanford.edu   
 then enter password   
 3. Commands: 
 
-Command | Usage
+Command | What it does
 ------- | --------
  pwd    | Print working directory of remote host    
  lpwd   | Print working directory of local client    
@@ -24,7 +24,4 @@ Command | Usage
 
 ## How to run the programs
 ### First do a test run:
-mode = "1d"
-do_test = True
-phi = 40. # phifix mode
 
