@@ -21,8 +21,14 @@ Command | What it does
  help   | Display help text    
 
 4. Data should be saved in data/ or its subfolders 
+    * If haven't done so, create the folders data/ and data\_npz/ by entering in terminal:
+    > mkdir data/
+    > mkdir data\_npz/
 
 
 ## How to run the programs
 ### First do a test run:
-
+* After finding the primary peak and secondary peak position,
+record in logbook and modify the parameters in config file    
+* In config file, make sure that do\_test = yes and other parameters
+are correct. Then 
