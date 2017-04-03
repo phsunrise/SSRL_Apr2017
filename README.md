@@ -5,6 +5,8 @@
 then enter password   
 3. Commands: 
 
+Command | Usage
+------- | --------
  pwd    | Print working directory of remote host    
  lpwd   | Print working directory of local client    
  cd     | Change directory on the remote host    
@@ -16,6 +18,7 @@ then enter password
  get    | Receive file from remote host to local client    
  put    | Send file from local client to remote host    
  help   | Display help text    
+
 4. Data should be saved in data/ or its subfolders 
 
 
