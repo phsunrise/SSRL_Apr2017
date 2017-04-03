@@ -21,8 +21,9 @@ Command | What it does
  help   | Display help text    
 
 4. Data should be saved in data/ or its subfolders 
-    * If haven't done so, create the folders data/ and data\_npz/ by entering in terminal:
-    > mkdir data/
+    * If haven't done so, create the folders data/
+    and data\_npz/ by entering in terminal:   
+    > mkdir data/     
     > mkdir data\_npz/
 
 
