@@ -2,7 +2,7 @@
 1. Open terminal
 2. Type in:    
 
-`sftp SSRL\\b_heimann@specftp.slac.stanford.edu`   
+`sftp SSRL\\b_heimann@specftp.slac.stanford.edu:data/bl7-2/Apr2017`   
 
 then enter password. It is recommended to keep this terminal connected
 to SFTP.
