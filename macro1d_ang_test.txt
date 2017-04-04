@@ -1,0 +1,679 @@
+camrefresh
+qdo ~/data/Apr2017/smacros/check.txt
+
+phifix 40.000
+
+newfile ~/data/Apr2017/5dpa/???
+pd savepath ~/data/Apr2017/5dpa/Pilatus
+pd save
+
+# DO NOT CHANGE
+pd stop; sauto on; pd_abs_on; boff
+
+plotselect normlz
+
+### CHECK if the motors can reach the corners ###
+abs ins 1111
+mv tth 56.759; mv th 29.722; mv chi 89.869
+mv tth 78.379; mv th 40.532; mv chi 89.869
+
+### BEGIN scan ###
+# step 0
+abs ins 1111
+mv tth 56.759
+mv th 29.722
+mv chi 89.869
+abs ins 0000
+ascan tth 56.759 56.759 1 1
+
+# step 1
+abs ins 1111
+mv tth 57.014
+mv th 29.849
+mv chi 89.869
+abs ins 0000
+ascan tth 57.014 57.014 1 1
+
+# step 2
+abs ins 1111
+mv tth 57.269
+mv th 29.977
+mv chi 89.869
+abs ins 0000
+ascan tth 57.269 57.269 1 1
+
+# step 3
+abs ins 1111
+mv tth 57.525
+mv th 30.105
+mv chi 89.869
+abs ins 0000
+ascan tth 57.525 57.525 1 1
+
+# step 4
+abs ins 1111
+mv tth 57.781
+mv th 30.233
+mv chi 89.869
+abs ins 0000
+ascan tth 57.781 57.781 1 1
+
+# step 5
+abs ins 1111
+mv tth 58.037
+mv th 30.361
+mv chi 89.869
+abs ins 0000
+ascan tth 58.037 58.037 1 1
+
+# step 6
+abs ins 1111
+mv tth 58.294
+mv th 30.489
+mv chi 89.869
+abs ins 0000
+ascan tth 58.294 58.294 1 1
+
+# step 7
+abs ins 1111
+mv tth 58.551
+mv th 30.618
+mv chi 89.869
+abs ins 0000
+ascan tth 58.551 58.551 1 1
+
+# step 8
+abs ins 1111
+mv tth 58.808
+mv th 30.747
+mv chi 89.869
+abs ins 0000
+ascan tth 58.808 58.808 1 1
+
+# step 9
+abs ins 1111
+mv tth 59.066
+mv th 30.875
+mv chi 89.869
+abs ins 0000
+ascan tth 59.066 59.066 1 1
+
+# step 10
+abs ins 1111
+mv tth 59.324
+mv th 31.004
+mv chi 89.869
+abs ins 0000
+ascan tth 59.324 59.324 1 1
+
+# step 11
+abs ins 1111
+mv tth 59.582
+mv th 31.133
+mv chi 89.869
+abs ins 0000
+ascan tth 59.582 59.582 1 1
+
+# step 12
+abs ins 1111
+mv tth 59.840
+mv th 31.263
+mv chi 89.869
+abs ins 0000
+ascan tth 59.840 59.840 1 1
+
+# step 13
+abs ins 1111
+mv tth 60.099
+mv th 31.392
+mv chi 89.869
+abs ins 0000
+ascan tth 60.099 60.099 1 1
+
+# step 14
+abs ins 1111
+mv tth 60.359
+mv th 31.522
+mv chi 89.869
+abs ins 0000
+ascan tth 60.359 60.359 1 1
+
+# step 15
+abs ins 1111
+mv tth 60.618
+mv th 31.652
+mv chi 89.869
+abs ins 0000
+ascan tth 60.618 60.618 1 1
+
+# step 16
+abs ins 1111
+mv tth 60.878
+mv th 31.782
+mv chi 89.869
+abs ins 0000
+ascan tth 60.878 60.878 1 1
+
+# step 17
+abs ins 1111
+mv tth 61.139
+mv th 31.912
+mv chi 89.869
+abs ins 0000
+ascan tth 61.139 61.139 1 1
+
+# step 18
+abs ins 1111
+mv tth 61.399
+mv th 32.042
+mv chi 89.869
+abs ins 0000
+ascan tth 61.399 61.399 1 1
+
+# step 19
+abs ins 1111
+mv tth 61.660
+mv th 32.173
+mv chi 89.869
+abs ins 0000
+ascan tth 61.660 61.660 1 1
+
+# step 20
+abs ins 1111
+mv tth 61.922
+mv th 32.303
+mv chi 89.869
+abs ins 0000
+ascan tth 61.922 61.922 1 1
+
+# step 21
+abs ins 1111
+mv tth 62.183
+mv th 32.434
+mv chi 89.869
+abs ins 0000
+ascan tth 62.183 62.183 1 1
+
+# step 22
+abs ins 1111
+mv tth 62.445
+mv th 32.565
+mv chi 89.869
+abs ins 0000
+ascan tth 62.445 62.445 1 1
+
+# step 23
+abs ins 1111
+mv tth 62.708
+mv th 32.696
+mv chi 89.869
+abs ins 0000
+ascan tth 62.708 62.708 1 1
+
+# step 24
+abs ins 1111
+mv tth 62.971
+mv th 32.828
+mv chi 89.869
+abs ins 0000
+ascan tth 62.971 62.971 1 1
+
+# step 25
+abs ins 1111
+mv tth 63.234
+mv th 32.959
+mv chi 89.869
+abs ins 0000
+ascan tth 63.234 63.234 1 1
+
+# step 26
+abs ins 1111
+mv tth 63.497
+mv th 33.091
+mv chi 89.869
+abs ins 0000
+ascan tth 63.497 63.497 1 1
+
+# step 27
+abs ins 1111
+mv tth 63.761
+mv th 33.223
+mv chi 89.869
+abs ins 0000
+ascan tth 63.761 63.761 1 1
+
+# step 28
+abs ins 1111
+mv tth 64.026
+mv th 33.355
+mv chi 89.869
+abs ins 0000
+ascan tth 64.026 64.026 1 1
+
+# step 29
+abs ins 1111
+mv tth 64.290
+mv th 33.488
+mv chi 89.869
+abs ins 0000
+ascan tth 64.290 64.290 1 1
+
+# step 30
+abs ins 1111
+mv tth 64.555
+mv th 33.620
+mv chi 89.869
+abs ins 0000
+ascan tth 64.555 64.555 1 1
+
+# step 31
+abs ins 1111
+mv tth 64.821
+mv th 33.753
+mv chi 89.869
+abs ins 0000
+ascan tth 64.821 64.821 1 1
+
+# step 32
+abs ins 1111
+mv tth 65.087
+mv th 33.886
+mv chi 89.869
+abs ins 0000
+ascan tth 65.087 65.087 1 1
+
+# step 33
+abs ins 1111
+mv tth 65.353
+mv th 34.019
+mv chi 89.869
+abs ins 0000
+ascan tth 65.353 65.353 1 1
+
+# step 34
+abs ins 1111
+mv tth 65.620
+mv th 34.152
+mv chi 89.869
+abs ins 0000
+ascan tth 65.620 65.620 1 1
+
+# step 35
+abs ins 1111
+mv tth 65.887
+mv th 34.286
+mv chi 89.869
+abs ins 0000
+ascan tth 65.887 65.887 1 1
+
+# step 36
+abs ins 1111
+mv tth 66.154
+mv th 34.420
+mv chi 89.869
+abs ins 0000
+ascan tth 66.154 66.154 1 1
+
+# step 37
+abs ins 1111
+mv tth 66.422
+mv th 34.554
+mv chi 89.869
+abs ins 0000
+ascan tth 66.422 66.422 1 1
+
+# step 38
+abs ins 1111
+mv tth 66.690
+mv th 34.688
+mv chi 89.869
+abs ins 0000
+ascan tth 66.690 66.690 1 1
+
+# step 39
+abs ins 1111
+mv tth 66.959
+mv th 34.822
+mv chi 89.869
+abs ins 0000
+ascan tth 66.959 66.959 1 1
+
+# step 40
+abs ins 1111
+mv tth 67.228
+mv th 34.957
+mv chi 89.869
+abs ins 0000
+ascan tth 67.228 67.228 1 1
+
+# step 41
+abs ins 1111
+mv tth 67.498
+mv th 35.091
+mv chi 89.869
+abs ins 0000
+ascan tth 67.498 67.498 1 1
+
+# step 42
+abs ins 1111
+mv tth 67.768
+mv th 35.226
+mv chi 89.869
+abs ins 0000
+ascan tth 67.768 67.768 1 1
+
+# step 43
+abs ins 1111
+mv tth 68.038
+mv th 35.362
+mv chi 89.869
+abs ins 0000
+ascan tth 68.038 68.038 1 1
+
+# step 44
+abs ins 1111
+mv tth 68.309
+mv th 35.497
+mv chi 89.869
+abs ins 0000
+ascan tth 68.309 68.309 1 1
+
+# step 45
+abs ins 1111
+mv tth 68.580
+mv th 35.633
+mv chi 89.869
+abs ins 0000
+ascan tth 68.580 68.580 1 1
+
+# step 46
+abs ins 1111
+mv tth 68.852
+mv th 35.768
+mv chi 89.869
+abs ins 0000
+ascan tth 68.852 68.852 1 1
+
+# step 47
+abs ins 1111
+mv tth 69.124
+mv th 35.905
+mv chi 89.869
+abs ins 0000
+ascan tth 69.124 69.124 1 1
+
+# step 48
+abs ins 1111
+mv tth 69.397
+mv th 36.041
+mv chi 89.869
+abs ins 0000
+ascan tth 69.397 69.397 1 1
+
+# step 49
+abs ins 1111
+mv tth 69.670
+mv th 36.177
+mv chi 89.869
+abs ins 0000
+ascan tth 69.670 69.670 1 1
+
+# step 50
+abs ins 1111
+mv tth 69.943
+mv th 36.314
+mv chi 89.869
+abs ins 0000
+ascan tth 69.943 69.943 1 1
+
+# step 51
+abs ins 1111
+mv tth 70.217
+mv th 36.451
+mv chi 89.869
+abs ins 0000
+ascan tth 70.217 70.217 1 1
+
+# step 52
+abs ins 1111
+mv tth 70.491
+mv th 36.588
+mv chi 89.869
+abs ins 0000
+ascan tth 70.491 70.491 1 1
+
+# step 53
+abs ins 1111
+mv tth 70.766
+mv th 36.726
+mv chi 89.869
+abs ins 0000
+ascan tth 70.766 70.766 1 1
+
+# step 54
+abs ins 1111
+mv tth 71.042
+mv th 36.863
+mv chi 89.869
+abs ins 0000
+ascan tth 71.042 71.042 1 1
+
+# step 55
+abs ins 1111
+mv tth 71.317
+mv th 37.001
+mv chi 89.869
+abs ins 0000
+ascan tth 71.317 71.317 1 1
+
+# step 56
+abs ins 1111
+mv tth 71.594
+mv th 37.139
+mv chi 89.869
+abs ins 0000
+ascan tth 71.594 71.594 1 1
+
+# step 57
+abs ins 1111
+mv tth 71.870
+mv th 37.278
+mv chi 89.869
+abs ins 0000
+ascan tth 71.870 71.870 1 1
+
+# step 58
+abs ins 1111
+mv tth 72.148
+mv th 37.416
+mv chi 89.869
+abs ins 0000
+ascan tth 72.148 72.148 1 1
+
+# step 59
+abs ins 1111
+mv tth 72.425
+mv th 37.555
+mv chi 89.869
+abs ins 0000
+ascan tth 72.425 72.425 1 1
+
+# step 60
+abs ins 1111
+mv tth 72.704
+mv th 37.694
+mv chi 89.869
+abs ins 0000
+ascan tth 72.704 72.704 1 1
+
+# step 61
+abs ins 1111
+mv tth 72.982
+mv th 37.834
+mv chi 89.869
+abs ins 0000
+ascan tth 72.982 72.982 1 1
+
+# step 62
+abs ins 1111
+mv tth 73.262
+mv th 37.973
+mv chi 89.869
+abs ins 0000
+ascan tth 73.262 73.262 1 1
+
+# step 63
+abs ins 1111
+mv tth 73.541
+mv th 38.113
+mv chi 89.869
+abs ins 0000
+ascan tth 73.541 73.541 1 1
+
+# step 64
+abs ins 1111
+mv tth 73.822
+mv th 38.253
+mv chi 89.869
+abs ins 0000
+ascan tth 73.822 73.822 1 1
+
+# step 65
+abs ins 1111
+mv tth 74.102
+mv th 38.394
+mv chi 89.869
+abs ins 0000
+ascan tth 74.102 74.102 1 1
+
+# step 66
+abs ins 1111
+mv tth 74.384
+mv th 38.534
+mv chi 89.869
+abs ins 0000
+ascan tth 74.384 74.384 1 1
+
+# step 67
+abs ins 1111
+mv tth 74.665
+mv th 38.675
+mv chi 89.869
+abs ins 0000
+ascan tth 74.665 74.665 1 1
+
+# step 68
+abs ins 1111
+mv tth 74.948
+mv th 38.816
+mv chi 89.869
+abs ins 0000
+ascan tth 74.948 74.948 1 1
+
+# step 69
+abs ins 1111
+mv tth 75.231
+mv th 38.958
+mv chi 89.869
+abs ins 0000
+ascan tth 75.231 75.231 1 1
+
+# step 70
+abs ins 1111
+mv tth 75.514
+mv th 39.100
+mv chi 89.869
+abs ins 0000
+ascan tth 75.514 75.514 1 1
+
+# step 71
+abs ins 1111
+mv tth 75.798
+mv th 39.242
+mv chi 89.869
+abs ins 0000
+ascan tth 75.798 75.798 1 1
+
+# step 72
+abs ins 1111
+mv tth 76.083
+mv th 39.384
+mv chi 89.869
+abs ins 0000
+ascan tth 76.083 76.083 1 1
+
+# step 73
+abs ins 1111
+mv tth 76.368
+mv th 39.526
+mv chi 89.869
+abs ins 0000
+ascan tth 76.368 76.368 1 1
+
+# step 74
+abs ins 1111
+mv tth 76.653
+mv th 39.669
+mv chi 89.869
+abs ins 0000
+ascan tth 76.653 76.653 1 1
+
+# step 75
+abs ins 1111
+mv tth 76.939
+mv th 39.812
+mv chi 89.869
+abs ins 0000
+ascan tth 76.939 76.939 1 1
+
+# step 76
+abs ins 1111
+mv tth 77.226
+mv th 39.956
+mv chi 89.869
+abs ins 0000
+ascan tth 77.226 77.226 1 1
+
+# step 77
+abs ins 1111
+mv tth 77.513
+mv th 40.099
+mv chi 89.869
+abs ins 0000
+ascan tth 77.513 77.513 1 1
+
+# step 78
+abs ins 1111
+mv tth 77.801
+mv th 40.243
+mv chi 89.869
+abs ins 0000
+ascan tth 77.801 77.801 1 1
+
+# step 79
+abs ins 1111
+mv tth 78.090
+mv th 40.387
+mv chi 89.869
+abs ins 0000
+ascan tth 78.090 78.090 1 1
+
+# step 80
+abs ins 1111
+mv tth 78.379
+mv th 40.532
+mv chi 89.869
+abs ins 0000
+ascan tth 78.379 78.379 1 1
+
+# DO NOT CHANGE
+pd_abs_off
+
+pd nosave
+boff
+pd start 1; sopen
+newfile ~/data/newfile
+qdo ~/data/Apr2017/smacros/check.txt
+camrefresh
+
+### END ###
