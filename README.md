@@ -1,7 +1,8 @@
 ## How to transfer data (using Mac)
 1. Open terminal
 2. Type in:    
-> `sftp SSRL\\\\b\_heimann@specftp.slac.stanford.edu`   
+
+`sftp SSRL\\b_heimann@specftp.slac.stanford.edu`   
 
 then enter password. It is recommended to keep this terminal connected
 to SFTP.
@@ -25,8 +26,10 @@ Command | What it does
 4. Data should be saved in data/ or its subfolders 
     * If haven't done so, create the folders data/ (for raw data)
     and data\_npz/ (for converted data) by entering in terminal:   
-    > mkdir data/     
-    > mkdir data\_npz/
+    ```
+    mkdir data
+    mkdir data\_npz
+    ```
 
 
 ## How to run the programs
@@ -35,7 +38,7 @@ Command | What it does
 record in logbook and modify the parameters in config file.     
 * In config file, make sure that do\_test = yes and other parameters
 are correct. Also check file paths. Then generate macro by:   
-> python genmacro.py [config file name]    
+`python genmacro.py [config file name]`  
 * Use SFTP to transfer the macro to BL7-2 and run it there.  
 * The test run must have the same scan parameters as the 2d scan
 
