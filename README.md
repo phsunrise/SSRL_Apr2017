@@ -28,7 +28,7 @@ Command | What it does
     and data\_npz/ (for converted data) by entering in terminal:   
     ```
     mkdir data
-    mkdir data\_npz
+    mkdir data_npz
     ```
 
 
@@ -49,7 +49,7 @@ whether these data are in subfolders or not.
 
 * Run
 
-> python convert2npy.py   
+`python convert2npy.py` 
 
 This will convert *all* .raw and .raw.pdi file in data/ to .npz files
 in data\_npz.
@@ -57,21 +57,21 @@ in data\_npz.
 * Modify the "filename" parameter in gettimes.py to match those from
 test scan. Then run  
 
-> python gettimes.py
+`python gettimes.py`
 
 This will generate file times.npy which will be used for 2d scan.
 
 
 ### Generate macro for 2D scan:
 * Modify configuration file. Make sure:   
-    ** mode = 2d
-    ** do\_test = no
-    ** Primary scan direction, range, and steps are the same as in 
-       test scan
-    ** Filenames are different from test scan
+    * mode = 2d
+    * do\_test = no
+    * Primary scan direction, range, and steps are the same as in 
+      test scan
+    * Filenames are different from test scan
 
 * Run
 
-> python genmacro.py [config file name] 
+`python genmacro.py [config file name]`
 
 * Transfer generated macro through SFTP.
