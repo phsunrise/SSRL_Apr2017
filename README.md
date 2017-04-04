@@ -1,7 +1,7 @@
 ## How to transfer data (using Mac)
 1. Open terminal
 2. Type in:    
-> sftp SSRL\\\\b\_heimann@specftp.slac.stanford.edu   
+> `sftp SSRL\\\\b\_heimann@specftp.slac.stanford.edu`   
 
 then enter password. It is recommended to keep this terminal connected
 to SFTP.
