@@ -176,6 +176,7 @@ with open(macroname, 'w') as f:
                 f.write("mv th %.3f\n" % th)
                 f.write("mv chi %.3f\n" % chi)
             f.write("abs ins 0000\n")
+            f.write("ct -1e5\n")
             if not use_angles:
                 f.write("hklscan %.3f %.3f %.3f %.3f %.3f %.3f 1 %d\n\n" % (\
                         h, h, k, k, l, l, t))
