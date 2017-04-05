@@ -83,7 +83,7 @@ python genmacro.py [config file name]
 * SSRL does not allow us to send files through SFTP. We can either send the
 generated macro through email, or upload to Google Drive
 
-* In the repository, enter for Mac:
+* To upload to Google Drive, in the repository, enter for Mac:
 ```
 ./gdrive-osx upload -p 0Bz7BBuzs7NtCLXZkOXBfZVhSMW8 [macro file name]
 ```
