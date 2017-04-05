@@ -74,4 +74,18 @@ This will generate file times.npy which will be used for 2d scan.
 
 `python genmacro.py [config file name]`
 
-* Transfer generated macro through SFTP.
+### Transfer generated macro
+* SSRL does not allow us to send files through SFTP. We can either send the
+generated macro through email, or upload to Google Drive
+
+* In the repository, enter:
+```
+./gdrive-osx upload -p 0Bz7BBuzs7NtCLXZkOXBfZVhSMW8 [macro file name]
+```
+for Mac, or
+```
+./gdrive-linux upload -p 0Bz7BBuzs7NtCLXZkOXBfZVhSMW8 [macro file name]
+```
+for Linux/Unix. The first time you use the program, you will be prompted
+    to enter a confirmation number by looking at a website. Please trust it
+    and follow the instructions.
