@@ -23,7 +23,7 @@ plt.semilogy(maxs, 'ro-')
 
 times = 10000./np.array(maxs)
 times = np.ceil(times)
-times[times>30.] = 30.
+times[times>20.] = 20.
 print times
 plt.figure()
 plt.plot(times)
