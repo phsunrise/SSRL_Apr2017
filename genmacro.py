@@ -179,7 +179,7 @@ with open(macroname, 'w') as f:
                 f.write("hklscan %.3f %.3f %.3f %.3f %.3f %.3f 1 %d\n\n" % (\
                         h, h, k, k, l, l, t))
             else:
-                f.write("ascan tth %.3f %.3f 0 %d\n\n" % (tth, tth, t))
+                f.write("ascan tth %.3f %.3f 1 %.f\n\n" % (tth, tth, t*0.5))
             step += 1
             totaltime += t
 
