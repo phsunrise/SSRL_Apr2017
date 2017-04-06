@@ -8,7 +8,7 @@ i_file = 0
 maxs = []
 while True:
     try:
-        data = np.load("data_npz/%s_%04d.npz"%(filename, i_file))['data']
+        data = np.load("data_npz/%s_scan%d_0000.npz"%(filename, i_file))['data']
         #attfac = np.asscalar(np.load("data_npz/%s_%04d_attfac.npy"%(filename, i_file)))
         maxs.append(np.max(data))
     except IOError:
