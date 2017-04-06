@@ -25,22 +25,34 @@ else:
                     wrongfiles.write(root+'/'+f+'\n')
                     continue
 
-                elif os.path.isfile("data_npz/"+f[10:-4]+".npy"):
-                    #print "file already exists!"
+                elif os.path.isfile("data_npz/"+f[10:-4]+".npz"):
+                    print "file %s already exists!" % f
                     continue
 
                 ## read in .raw data
                 data = np.fromfile(open(root+'/'+f, 'rb'), dtype=np.int32).reshape(imshape)
 
-                ### read in angles from .pdi file
-                #for line in open(root+'/'+f+".pdi", 'r'):
-                #    if line.startswith("# Theta"):
-                #        th, _, tth, chi, phi, gam, mu = re.findall(r"[-+]?\d*\.\d+|[-+]?\d+", line)
-                #        break
-
-                #np.savez("data_npz/"+f[10:-4]+".npz", data=data, \
-                #         th=th, tth=tth, chi=chi, phi=phi, gam=gam, mu=mu)
-                np.save("data_npz/"+f[10:-4], data)
+                ## read in angles from .pdi file
+                for line in open(root+'/'+f+".pdi", 'r'):
+                    if line.startswith("# Theta"):
+                        #th, _, tth, chi, phi, gam, mu = re.findall(r"[-+]?\d*\.\d+|[-+]?\d+", line)
+                        values = line.split(' ')
+                        values_valid = []
+                        for value in values:
+                            if len(value)>1 and value[-1] == ';':
+                                value = value[:-1]
+                            try:
+                                value = float(value)
+                                values_valid.append(value)
+                            except ValueError:
+                                continue
+                        #print line
+                        #print values_valid
+                        th, tth, chi, phi, gam, mu = values_valid
+                        break
+                np.savez("data_npz/"+f[10:-4]+".npz", data=data, \
+                         th=th, tth=tth, chi=chi, phi=phi, gam=gam, mu=mu)
+                #np.save("data_npz/"+f[10:-4], data)
                 print "done file %s" % (root+'/'+f)
 
     wrongfiles.close()

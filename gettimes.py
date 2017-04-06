@@ -8,8 +8,7 @@ i_file = 0
 maxs = []
 while True:
     try:
-        #data = np.load("data_npz/%s_%04d.npz"%(filename, i_file))['data']
-        data = np.load("data_npz/%s_%04d.npy"%(filename, i_file))
+        data = np.load("data_npz/%s_%04d.npz"%(filename, i_file))['data']
         #attfac = np.asscalar(np.load("data_npz/%s_%04d_attfac.npy"%(filename, i_file)))
         maxs.append(np.max(data))
     except IOError:
@@ -18,6 +17,8 @@ while True:
 
 print maxs
 plt.figure()
+plt.xlabel("scan step #")
+plt.ylabel("max count")
 plt.semilogy(maxs, 'ro-')
 
 times = 10000./np.array(maxs)
@@ -26,6 +27,8 @@ times[times>30.] = 30.
 print times
 plt.figure()
 plt.plot(times)
+plt.xlabel("scan step #")
+plt.ylabel("time (s)")
 plt.show()
 
 np.save("times.npy", times)
