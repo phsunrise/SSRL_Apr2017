@@ -177,7 +177,7 @@ with open(macroname, 'w') as f:
             f.write("ct -1e5\n")
             if not use_angles:
                 f.write("hklscan %.3f %.3f %.3f %.3f %.3f %.3f 1 %.2f\n\n" % (\
-                        h, h, k, k, l, l, t))
+                        h, h, k, k, l, l, t*0.5))
             else:
                 f.write("ascan tth %.3f %.3f 1 %.2f\n\n" % (tth, tth, t*0.5))
             step += 1
