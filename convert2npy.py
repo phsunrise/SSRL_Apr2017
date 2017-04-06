@@ -3,12 +3,12 @@ import os, sys
 import re
 from settings import imshape
 
-do_test = False
+do_test = False 
 
 if do_test:
     import matplotlib.pyplot as plt
 
-    filename = "/data/???.raw"
+    filename = "data/b_heimann_si_thtth_1_scan4_0050.raw"
 
     data = np.fromfile(open(filename, 'rb'), dtype=np.int32).reshape(imshape)
     plt.imshow(data, interpolation='nearest')
@@ -25,21 +25,22 @@ else:
                     wrongfiles.write(root+'/'+f+'\n')
                     continue
 
-                elif os.path.isfile("data_npz/"+f[10:-4]+".npz"):
+                elif os.path.isfile("data_npz/"+f[10:-4]+".npy"):
                     #print "file already exists!"
                     continue
 
                 ## read in .raw data
                 data = np.fromfile(open(root+'/'+f, 'rb'), dtype=np.int32).reshape(imshape)
 
-                ## read in angles from .pdi file
-                for line in open(root+'/'+f+".pdi", 'r'):
-                    if line.startswith("# Theta"):
-                        th, _, tth, chi, phi, gam, mu = re.findall(r"[-+]?\d*\.\d+|[-+]?\d+", line)
-                        break
+                ### read in angles from .pdi file
+                #for line in open(root+'/'+f+".pdi", 'r'):
+                #    if line.startswith("# Theta"):
+                #        th, _, tth, chi, phi, gam, mu = re.findall(r"[-+]?\d*\.\d+|[-+]?\d+", line)
+                #        break
 
-                np.savez("data_npz/"+f[10:-4]+".npz", data=data, \
-                         th=th, tth=tth, chi=chi, phi=phi, gam=gam, mu=mu)
+                #np.savez("data_npz/"+f[10:-4]+".npz", data=data, \
+                #         th=th, tth=tth, chi=chi, phi=phi, gam=gam, mu=mu)
+                np.save("data_npz/"+f[10:-4], data)
                 print "done file %s" % (root+'/'+f)
 
     wrongfiles.close()
