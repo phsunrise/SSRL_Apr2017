@@ -5,7 +5,7 @@ a0_reciprocal = 2.*np.pi/a0
 
 plot_dir = "/scratch/users/phsun/SSRL_Nov16/plots/"
 imshape = (195, 487)
-centralpix = (126, 250)
+centralpix = (130, 252)
 ar = [23, 193, 205, 296] # active region on the detector, due to slit
 
 spreadsheet_filename = "/scratch/users/phsun/SSRL_Nov16/scans.xlsx"
