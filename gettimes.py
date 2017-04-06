@@ -2,9 +2,9 @@ import numpy as np
 import pickle
 import matplotlib.pyplot as plt
 
-filename = "si_thtth_1_scan4" # do not include "b_heimann"
+filename = "5dpa_test_1" # do not include "b_heimann"
 
-i_file = 0
+i_file = 1
 maxs = []
 while True:
     try:
@@ -21,7 +21,7 @@ plt.xlabel("scan step #")
 plt.ylabel("max count")
 plt.semilogy(maxs, 'ro-')
 
-times = 10000./np.array(maxs)
+times = 5000./np.array(maxs)
 times = np.ceil(times)
 times[times>20.] = 20.
 print times
