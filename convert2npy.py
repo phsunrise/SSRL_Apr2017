@@ -1,16 +1,17 @@
 import numpy as np
 import os, sys
 import re
-from settings import imshape
+from settings import imshape, centralpix
 
 do_test = False 
 
 if do_test:
     import matplotlib.pyplot as plt
 
-    filename = "data/b_heimann_si_thtth_1_scan4_0050.raw"
+    filename = "data/b_heimann_0p2dpa_2dscan_2_scan280_0000.raw"
 
     data = np.fromfile(open(filename, 'rb'), dtype=np.int32).reshape(imshape)
+    print data[centralpix]
     plt.imshow(data, interpolation='nearest')
     plt.colorbar()
     plt.show()

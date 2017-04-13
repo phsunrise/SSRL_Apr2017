@@ -128,20 +128,30 @@ def angs_phifix(h, k, l, phi, orimat):
 if __name__=='__main__':
     ######## orimat1 ########
     ## (220) peak (primary):
-    or0 = (67.2282, 34.727, 90.7624, 0.)
+    or0 = (67.250, 33.733, 89.35, 0.)
     hkl0 = [2., 2., 0.]
     ## (112) peak:
-    or1 = (57.2956, 28.398, 145.085, 11.)
+    or1 = (57.2656, 30.78, 143.9644, 60.)
     hkl1 = [1., 1., 2.]
 
-    np.save("orimat1.npy", orimat_calc(or0, hkl0, or1, hkl1))
+    np.save("orimats/orimat1.npy", orimat_calc(or0, hkl0, or1, hkl1))
     print "saved orimat1"
 
-    orimat = np.load("orimat1.npy")
+    orimat = np.load("orimats/orimat1.npy")
     print "primary:", orimat.dot(qvec(*or0))
     print "secondary:", orimat.dot(qvec(*or1))
 
-    tth, th, chi = angs_phifix(2,2,0, 0., orimat)
-    print "calculated (2,2,0) for phi=0.: tth=%.4f, th=%.4f, chi=%.4f" % (tth, th, chi) 
-    tth, th, chi = angs_phifix(1,1,2, 11., orimat)
-    print "calculated (1,1,2) for phi=11.: tth=%.4f, th=%.4f, chi=%.4f" % (tth, th, chi) 
+    ######## orimat2 ########
+    ## (220) peak (primary):
+    or0 = (67.240, 33.6134, 89.1, 0.)
+    hkl0 = [2., 2., 0.]
+    ## (112) peak:
+    or1 = (57.3156, 30.7894, 143.922, 60.)
+    hkl1 = [1., 1., 2.]
+
+    np.save("orimats/orimat2.npy", orimat_calc(or0, hkl0, or1, hkl1))
+    print "saved orimat2"
+
+    orimat = np.load("orimats/orimat2.npy")
+    print "primary:", orimat.dot(qvec(*or0))
+    print "secondary:", orimat.dot(qvec(*or1))

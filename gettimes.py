@@ -2,7 +2,7 @@ import numpy as np
 import pickle
 import matplotlib.pyplot as plt
 
-filename = "5dpa_test_1" # do not include "b_heimann"
+filename = "2dpa_test_1" # do not include "b_heimann"
 
 i_file = 1
 maxs = []
@@ -32,3 +32,4 @@ plt.ylabel("time (s)")
 plt.show()
 
 np.save("times.npy", times)
+np.save("%s_times.npy"%filename, times)
