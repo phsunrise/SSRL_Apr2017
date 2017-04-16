@@ -1,12 +1,8 @@
 import numpy as np
 from scipy import optimize
-from settings import centralpix
+from settings import centralpix, R_det, pixsize
 
 Degree = np.pi/180.
-
-## assuming detector distance is 1, calibration gives pixel size
-p1 = 1./6589.1826 # pix[1] direction
-p0 = 1./6653.367 # pix[0] direction
 
 ## incoming xray
 ## for vectors, assuming k has unit length 
@@ -34,9 +30,9 @@ def qvec(tth, th, chi, phi, pix=centralpix):
     tth = tth*Degree
     ## calculate pixel position in lab coordinates 
     ## (X-ray coming in -x direction, pixel (126, 250) lies in xy-plane)
-    ko = np.array([-np.cos(tth)+p1*(pix[1]-centralpix[1])*np.sin(tth), \
-                   np.sin(tth)+p1*(pix[1]-centralpix[1])*np.cos(tth), \
-                   -p0*(pix[0]-centralpix[0])])
+    ko = np.array([-np.cos(tth)+pixsize/R_det*(pix[1]-centralpix[1])*np.sin(tth), \
+                   np.sin(tth)+pixsize/R_det*(pix[1]-centralpix[1])*np.cos(tth), \
+                   -pixsize/R_det*(pix[0]-centralpix[0])])
     ko = ko/np.linalg.norm(ko) # normalize ko
 
     return np.array(R(th, chi, phi)*np.matrix(ko-ki).T).ravel()
@@ -49,9 +45,9 @@ def qvec_array(tth, th, chi, phi, pixs=None):
     if not pixs.shape[0] == 2:
         raise ValueError("Wrong input shape for pixs! Must be (2, n) numpy array")
     tth = tth*Degree
-    ko = np.matrix([-np.cos(tth)+p1*(pixs[1]-centralpix[1])*np.sin(tth), \
-                   np.sin(tth)+p1*(pixs[1]-centralpix[1])*np.cos(tth), \
-                   -p0*(pixs[0]-centralpix[0])])
+    ko = np.matrix([-np.cos(tth)+pixsize/R_det*(pixs[1]-centralpix[1])*np.sin(tth), \
+                   np.sin(tth)+pixsize/R_det*(pixs[1]-centralpix[1])*np.cos(tth), \
+                   -pixsize/R_det*(pixs[0]-centralpix[0])])
     ## normalize each vector
     ko = ko/np.power(np.sum(np.power(ko, 2), axis=0), 0.5)
 

@@ -3,19 +3,32 @@ import numpy as np
 a0 = 3.1648
 a0_reciprocal = 2.*np.pi/a0
 
-plot_dir = "/scratch/users/phsun/SSRL_Nov16/plots/"
+plot_dir = "/home/phsun/Apr2017/plots/"
 imshape = (195, 487)
 centralpix = (130, 252)
-ar = [23, 193, 205, 296] # active region on the detector, due to slit
+R_det = 1.121 # detector distance in m
+pixsize = 172.e-6 # pixel size in m
+ar = [60, 192, 148, 348] # active region on the detector, due to slit
+
+### three directions
+e0 = np.array([1.,1.,0.])/np.sqrt(2.)
+e1 = np.array([0.,0.,1.])/np.sqrt(1.)
+e2 = np.array([1.,-1.,0.])/np.sqrt(2.)
+e_mat = np.array([e0, e1, e2]).T
 
 ### hkl histogramming information 
-#bins = (201, 201, 201)
-#hcoords = np.linspace(1.75, 2.25, bins[0])
-#kcoords = np.linspace(1.75, 2.25, bins[1])
-#lcoords = np.linspace(-0.25, 0.25, bins[2])
-#histrange = ((hcoords[0]*1.5-hcoords[1]*0.5, hcoords[-1]*1.5-hcoords[-2]*0.5),
-#             (kcoords[0]*1.5-kcoords[1]*0.5, kcoords[-1]*1.5-kcoords[-2]*0.5),
-#             (lcoords[0]*1.5-lcoords[1]*0.5, lcoords[-1]*1.5-lcoords[-2]*0.5))
+hist_range = [(-0.405, 0.405, 1621), # [110] # min, max, steps
+              (-0.035, 0.035, 141),  # [001]
+              (-0.035, 0.035, 141)]  # [1-10]
+hist_bincenters = []
+hist_binedges = []
+hist_binwidths = []
+for i in xrange(3):
+    _min, _max, _n = hist_range[i]
+    _d = (_max - _min) * 1. / (_n-1)
+    hist_bincenters.append(np.linspace(_min, _max, _n))
+    hist_binedges.append(np.linspace(_min-_d/2., _max+_d/2., _n+1))
+    hist_binwidths.append(_d)
 
 # calibration scans
 tthscan_filename = "calscan_tth_1_scan2"

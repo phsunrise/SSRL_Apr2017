@@ -1,35 +1,30 @@
 import numpy as np
-import pickle
+import helper
+import os, sys
 import matplotlib.pyplot as plt
+from pprint import pprint
 
-filename = "2dpa_test_1" # do not include "b_heimann"
+runs = [3, 4]
 
-i_file = 1
-maxs = []
-while True:
-    try:
-        data = np.load("data_npz/%s_scan%d_0000.npz"%(filename, i_file))['data']
-        #attfac = np.asscalar(np.load("data_npz/%s_%04d_attfac.npy"%(filename, i_file)))
-        maxs.append(np.max(data))
-    except IOError:
-        break
-    i_file += 1
+for run in runs:
+    filename = helper.getparam('filenames', run)
 
-print maxs
-plt.figure()
-plt.xlabel("scan step #")
-plt.ylabel("max count")
-plt.semilogy(maxs, 'ro-')
+    times_array = []
+    for root, dirs, files in os.walk(os.getcwd()+"/data"):
+        if filename in files:
+            for line in open(root+'/'+filename, 'r'):
+                if line.startswith("#T "):
+                    times_array.append(float(line.split(' ')[1]))
+            break # found the file, so stop looping through directory
 
-times = 5000./np.array(maxs)
-times = np.ceil(times)
-times[times>20.] = 20.
-print times
-plt.figure()
-plt.plot(times)
-plt.xlabel("scan step #")
-plt.ylabel("time (s)")
-plt.show()
+    if len(times_array) != 81*7:
+        print "file %s is wrong!" % filename
+        continue
+    plt.semilogy(times_array[0::7], label="0")
+    pprint(zip(range(81), times_array[0::7]))
+    plt.semilogy(times_array[3::7], label="3")
 
-np.save("times.npy", times)
-np.save("%s_times.npy"%filename, times)
+    plt.legend()
+    plt.show()
+
+    np.save("times/%s_times.npy"%filename, times_array)
