@@ -17,7 +17,7 @@ import os, sys
 from settings import ar # active region on the detector, due to slit 
 from settings import hist_binedges, e_mat
 
-runs = [3,4,7,8,9] 
+runs = [5,6]
 
 if len(sys.argv) < 2: # debug mode; generate file list and exit
     filelist = {}
@@ -52,35 +52,34 @@ for run in runs:
     print "starting run %d, filename=%s" % (\
                     run, filename)
 
-    i_scan = 1 
+    i_file = 0 
     hist = np.zeros([len(bins[i])-1 for i in xrange(3)])
     counts = np.zeros([len(bins[i])-1 for i in xrange(3)])
     while True:
         try:
-            for i_file in [0,1]:
-                print "starting scan %d, file %d" % (i_scan, i_file)
-                data = np.load("data_npz/%s_scan%d_%04d.npz"%(\
-                               filename, i_scan, i_file))['data']
-                _, t, monitor, normlz, filters, pd3 = np.load("data_npz/%s_scan%d_%04d_add.npy"%(\
-                                        filename, i_scan, i_file))
-                data = data*1./t*(monitor*normlz*1./pd3)
-                data = data[ar[0]:ar[1], ar[2]:ar[3]].flatten()
-                hkl = np.transpose(np.load("data_npz/%s_scan%d_%04d_hkl.npy"%(\
-                                    filename, i_scan, i_file)), (1,2,0))
-                hkl = hkl[ar[0]:ar[1], ar[2]:ar[3]].reshape((ar[1]-ar[0])*(ar[3]-ar[2]), 3)
-                hkl = hkl - np.repeat([[2.,2.,0.]], len(hkl), axis=0)
-                xyz = hkl.dot(e_mat)
+            print "starting file %d" % (i_file)
+            data = np.load("data_npz/%s_%04d.npz"%(\
+                            filename, i_file))['data']
+            _, t, monitor, _, _ = np.load("data_npz/%s_%04d_add.npy"%(\
+                                    filename, i_file))
+            data = data*1./(t*monitor)
+            data = data[ar[0]:ar[1], ar[2]:ar[3]].flatten()
+            hkl = np.transpose(np.load("data_npz/%s_%04d_hkl.npy"%(\
+                                filename, i_file)), (1,2,0))
+            hkl = hkl[ar[0]:ar[1], ar[2]:ar[3]].reshape((ar[1]-ar[0])*(ar[3]-ar[2]), 3)
+            hkl = hkl - np.repeat([[2.,2.,0.]], len(hkl), axis=0)
+            xyz = hkl.dot(e_mat)
 
-                hist1, edges = np.histogramdd(xyz, bins=bins, weights=data)
-                counts1, edges = np.histogramdd(xyz, bins=bins)
-                
-                hist = hist + hist1
-                counts = counts + counts1
+            hist1, edges = np.histogramdd(xyz, bins=bins, weights=data)
+            counts1, edges = np.histogramdd(xyz, bins=bins)
+            
+            hist = hist + hist1
+            counts = counts + counts1
 
         except IOError:
             break
 
-        i_scan += 1
+        i_file += 1
 
     np.save("data_hklmat/%s_hist_%04d.npy"%(filename, i_block), hist)
     np.save("data_hklmat/%s_counts_%04d.npy"%(filename, i_block), counts)

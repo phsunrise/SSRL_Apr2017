@@ -1,7 +1,8 @@
 import numpy as np
 import helper
 
-runs = [4]
+runs = [5,6]
+runs = [3,4,7,8,9]
 
 for run in runs:
     filename = helper.getparam("filenames", run)
@@ -22,3 +23,5 @@ for run in runs:
 
     np.save("data_hklmat/%s_hist.npy"%(filename), hist)
     np.save("data_hklmat/%s_counts.npy"%(filename), counts)
+
+    print "done run %d" % run

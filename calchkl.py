@@ -3,16 +3,15 @@ import sys
 from orimat import qvec, qvec_array 
 from settings import imshape
 import time
-import pickle
 import matplotlib.pyplot as plt
+import helper
 
-runs = [4] 
-scans = pickle.load(open("scans.pickle", 'rb'))
+runs = [5, 6] 
 hkl_centers = []
 
 for run in runs:
-    filename = scans['filenames'][run] 
-    orimat = np.load("orimats/%s.npy"%(scans['orimats'][run]))
+    filename = helper.getparam("filenames", run)
+    orimat = np.load("orimats/%s.npy"%(helper.getparam("orimats", run)))
     print "starting run %d, filename=%s, orimat=" % (\
                     run, filename)
     print orimat

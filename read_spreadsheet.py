@@ -26,6 +26,6 @@ for row in ws.iter_rows(min_row=2):
     samples[run] = sample 
     orimats[run] = orimat 
 
-pickle.dump({"filenames":filenames, 'samples':samples, \
+pickle.dump({"filenames":filenames, "samples":samples, \
              "orimats":orimats}, \
             open("scans.pickle", 'wb'))

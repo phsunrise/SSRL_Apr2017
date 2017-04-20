@@ -7,10 +7,10 @@ for root, dirs, files in os.walk(os.getcwd()+"/data"):
         if f[-4:] == ".csv":
             filename = root+'/'+f
             data = np.genfromtxt(filename, delimiter=',', \
-                                 usecols=[0,2,3,10,15], skip_header=1)
-            ## these columns are: step #, time, monitor, normlz, pd3 
+                                 usecols=[0,2,3,10,11,15], skip_header=1)
+            ## these columns are: step #, time, monitor, normlz, filters, pd3 
             try:
-                attfac = data[:,3]/data[:,4]
+                attfac = data[:,3]/data[:,5]
             except IndexError:
                 wrongfiles.write(filename+'\n')
                 print "File %s is wrong" % filename

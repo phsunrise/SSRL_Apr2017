@@ -151,3 +151,48 @@ if __name__=='__main__':
     orimat = np.load("orimats/orimat2.npy")
     print "primary:", orimat.dot(qvec(*or0))
     print "secondary:", orimat.dot(qvec(*or1))
+
+    ######## orimat3 ########
+    ## (220) peak (primary):
+    or0 = (67.2382, 32.336, 89.68, 0.)
+    hkl0 = [2., 2., 0.]
+    ## (112) peak:
+    or1 = (57.1456, 27.8038, 144.1250, 10.)
+    hkl1 = [1., 1., 2.]
+
+    np.save("orimats/orimat3.npy", orimat_calc(or0, hkl0, or1, hkl1))
+    print "saved orimat3"
+
+    orimat = np.load("orimats/orimat3.npy")
+    print "primary:", orimat.dot(qvec(*or0))
+    print "secondary:", orimat.dot(qvec(*or1))
+
+    ######## orimat4 ########
+    ## (220) peak (primary):
+    or0 = (67.2382, 32.98, 88.88, 0.)
+    hkl0 = [2., 2., 0.]
+    ## (112) peak:
+    or1 = (57.2256, 19.8848, 143.7502, 30.)
+    hkl1 = [1., 1., 2.]
+
+    np.save("orimats/orimat4.npy", orimat_calc(or0, hkl0, or1, hkl1))
+    print "saved orimat4"
+
+    orimat = np.load("orimats/orimat4.npy")
+    print "primary:", orimat.dot(qvec(*or0))
+    print "secondary:", orimat.dot(qvec(*or1))
+
+    ######## orimat5 ########
+    ## (220) peak (primary):
+    or0 = (67.2382, 33.8644, 89.5, 0.)
+    hkl0 = [2., 2., 0.]
+    ## (112) peak:
+    or1 = (57.2156, 28.9424, 143.9244, 50.2)
+    hkl1 = [1., 1., 2.]
+
+    np.save("orimats/orimat5.npy", orimat_calc(or0, hkl0, or1, hkl1))
+    print "saved orimat5"
+
+    orimat = np.load("orimats/orimat5.npy")
+    print "primary:", orimat.dot(qvec(*or0))
+    print "secondary:", orimat.dot(qvec(*or1))

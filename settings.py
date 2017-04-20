@@ -9,6 +9,7 @@ centralpix = (130, 252)
 R_det = 1.121 # detector distance in m
 pixsize = 172.e-6 # pixel size in m
 ar = [60, 192, 148, 348] # active region on the detector, due to slit
+#ar = [110, 151, 232, 273] # active region on the detector, due to slit
 
 ### three directions
 e0 = np.array([1.,1.,0.])/np.sqrt(2.)
