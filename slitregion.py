@@ -2,8 +2,13 @@ import matplotlib.pyplot as plt
 from matplotlib import patches
 import numpy as np
 from settings import centralpix, plot_dir
+import helper
+import sys
 
-data = np.load("data_npz/0p2dpa_2dscan_2_scan10_0000.npz")['data']
+run, i_scan = int(sys.argv[1]), int(sys.argv[2])
+
+filename = helper.getparam("filenames", run)
+data = np.load("data_npz/%s_scan%d_0000.npz" % (filename, i_scan))['data']
 #data = np.load("data_npz/centerpix_1_040517-155118.npz")['data']
 
 plt.imshow(data, interpolation='nearest')

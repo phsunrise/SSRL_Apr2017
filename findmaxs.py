@@ -27,7 +27,7 @@ while True:
             hkl = hkl[ar[0]:ar[1], ar[2]:ar[3]]
             xyz = (hkl[maind[0], maind[1]]-np.array([2,2,0])).dot(e_mat)
 
-            maxs.append((i_scan, i_file, ma, xyz))
+            maxs.append((i_scan, i_file, ma, maind, xyz))
     except IOError:
         break
 
@@ -36,5 +36,6 @@ while True:
 pickle.dump(maxs, open("run%d_maxs.pickle"%run, 'wb'))
 
 maxs.sort(key=lambda tup:tup[2])
-for tup in maxs:
-    print "%10d\t%10f\t%10f\t%10f\t%4d" % (int(tup[2]), tup[3][0], tup[3][1], tup[3][2], tup[0])
+for i_scan, i_file, ma, maind, xyz in maxs:
+    print "%10d  (%4d, %4d)  %10f  %10f  %10f  %4d" % (\
+            ma, maind[0], maind[1], xyz[0], xyz[1], xyz[2], i_scan)

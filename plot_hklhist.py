@@ -17,12 +17,8 @@ for run in runs:
     hist = np.load("data_hklmat/%s_hist.npy"%filename)
     counts = np.load("data_hklmat/%s_counts.npy"%filename)
     
-    if sample == "2dpa":
-        hist1 = np.sum(hist[:,:,43:48], axis=2)
-        counts1 = np.sum(counts[:,:,43:48], axis=2)
-    else:
-        hist1 = np.sum(hist[:,:,68:73], axis=2)
-        counts1 = np.sum(counts[:,:,68:73], axis=2)
+    hist1 = np.sum(hist[:,:,68:73], axis=2)
+    counts1 = np.sum(counts[:,:,68:73], axis=2)
     #hist1 = hist[:,:,70]
     #counts1 = counts[:,70,:]
     intensities = np.nan_to_num(hist1*1./counts1)

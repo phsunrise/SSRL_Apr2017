@@ -7,5 +7,6 @@ run = int(sys.argv[1])
 maxs = pickle.load(open("run%d_maxs.pickle"%run, 'rb'))
 maxs.sort(key=lambda tup:tup[2])
 
-for tup in maxs:
-    print "%10d\t%10f\t%10f\t%10f\t%4d" % (tup[2], tup[3][0], tup[3][1], tup[3][2], tup[0])
+for i_scan, i_file, ma, maind, xyz in maxs:
+    print "%10d  (%4d, %4d)  %10f  %10f  %10f  %4d" % (\
+            ma, maind[0], maind[1], xyz[0], xyz[1], xyz[2], i_scan)
