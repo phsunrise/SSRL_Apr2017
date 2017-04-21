@@ -14,7 +14,7 @@ ratios = pickle.load(open("ratios.pickle", 'rb'))
 fig, ax = plt.subplots(1, 1, figsize=(10,5))
 
 
-ind = 50 # 50 for -0.10, 60 for -0.05, 80 for 0.05, 90 for 0.10 
+ind = 50 # 50 for -0.010, 60 for -0.005, 80 for 0.005, 90 for 0.010 
 
 slices = []
 for run in runs:
