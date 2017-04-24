@@ -36,5 +36,8 @@ tthscan_filename = "calscan_tth_1_scan2"
 gamscan_filename = "calscan_gam_1_scan1"
 
 # fitting
-#Rlist = [5, 10, 15, 20, 30, 40, 50, 60, 80, 100] # all available sizes
-Rlist = [5, 10, 20, 30, 40, 60, 80, 100]
+#Rlist = [5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 80, 100] # all available sizes
+Rlist = [5, 10, 15, 20, 25, 30, 40, 50, 60, 80, 100]
+Rlist_colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', \
+                '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', \
+                '#bcbd22', '#17becf', 'm', 'k']
