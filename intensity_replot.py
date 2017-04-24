@@ -13,10 +13,8 @@ ratios = pickle.load(open("ratios.pickle", 'rb'))
 
 fig, ax = plt.subplots(1, 1, figsize=(10,5))
 
-
-ind = 50 # 50 for -0.010, 60 for -0.005, 80 for 0.005, 90 for 0.010 
-
 slices = []
+inds = []
 for run in runs:
     filename = helper.getparam("filenames", run)
     sample = helper.getparam("samples", run)
@@ -25,24 +23,34 @@ for run in runs:
         data[:811, :] = np.fliplr(data[:811, :])
     slices.append(data)
     
+    resample_shape = (162, 10)
+    qarray_plot = np.mean(qarray[:np.prod(resample_shape)].reshape(*resample_shape), axis=1)
+    if run == 7:
+        ind = 56 # 56 for -0.0065
+    elif run == 9:
+        ind = 55 # 55 for -0.0075
+    else:
+        ind = 50 # 50 for -0.010, 60 for -0.005, 80 for 0.005, 90 for 0.010 
+    inds.append(ind)
+
+    data = np.mean(data[:np.prod(resample_shape), ind-2:ind+3], \
+                        axis=1).reshape(*resample_shape)
     if sample == "0.2dpa_ref":
         data0 = data
         continue
+    else:
+        data = data - data0
+        #data = data/ratios[run] - data0
 
-    data = data - data0
-    #data = data/ratios[run] - data0
-
-    resample_shape = (162, 10)
-    qarray_plot = np.mean(qarray[:np.prod(resample_shape)].reshape(*resample_shape), axis=1)
-    data = np.mean(data[:np.prod(resample_shape), ind-2:ind+3], \
-                        axis=1).reshape(*resample_shape)
     err_plot = np.std(data, axis=1)
     data_plot = np.mean(data, axis=1)
+    np.savez("fit/run%d_data.npz"%run, qarray=qarray_plot, \
+             data=data_plot, err=err_plot)
     
     ax.errorbar(qarray_plot, qarray_plot**4*data_plot, \
-                 yerr=qarray_plot**4*err_plot, fmt='-', lw=0.8, label=sample)
+                yerr=qarray_plot**4*err_plot, fmt='-', lw=0.8, label=sample)
 
-ax.set_ylim(-0.1, 0.15)
+ax.set_ylim(-0.05, 0.15)
 ax.axhline(y=0, color='k', ls='-', lw=0.5)
 ax.legend()
 ax.set_xlabel(r"$q$ $(\AA^{-1})$")
@@ -63,7 +71,8 @@ for i_run, ax in enumerate(grid):
     im = ax.imshow(slices[i_run], extent=[xmin, xmax, ymin, ymax], \
                    origin='lower', interpolation='nearest', \
                    vmin=vmin, vmax=vmax)
-    ax.axvline(x=-0.01, color='r', ls='--')
+    print "%s, slice at %f" % (sample, hist_bincenters[1][inds[i_run]])
+    ax.axvline(x=hist_bincenters[1][inds[i_run]], color='r', ls='--')
     ax.set_xlabel("[001]")
     ax.set_ylabel("[110]")
     ax.set_title(sample)

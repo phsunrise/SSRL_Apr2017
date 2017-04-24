@@ -17,10 +17,16 @@ for run in runs:
     hist = np.load("data_hklmat/%s_hist.npy"%filename)
     counts = np.load("data_hklmat/%s_counts.npy"%filename)
     
-    hist1 = np.sum(hist[:,:,68:73], axis=2)
-    counts1 = np.sum(counts[:,:,68:73], axis=2)
-    #hist1 = hist[:,:,70]
-    #counts1 = counts[:,70,:]
+    if run == 7: # center between two peaks is at y = 0.0075, yind = 85
+        hist1 = np.sum(hist[:,83:88,:], axis=1)
+        counts1 = np.sum(counts[:,83:88,:], axis=1)
+    elif run == 9: # center between two peaks is at z = -0.0065, zind = 57
+        hist1 = np.sum(hist[:,:,55:60], axis=2)
+        counts1 = np.sum(counts[:,:,55:60], axis=2)
+    else: # center is at yind = 70, zind = 70 
+        hist1 = np.sum(hist[:,:,68:73], axis=2)
+        counts1 = np.sum(counts[:,:,68:73], axis=2)
+    
     intensities = np.nan_to_num(hist1*1./counts1)
 
     ## interpolate to fill up zero values

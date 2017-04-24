@@ -34,3 +34,7 @@ for i in xrange(3):
 # calibration scans
 tthscan_filename = "calscan_tth_1_scan2"
 gamscan_filename = "calscan_gam_1_scan1"
+
+# fitting
+#Rlist = [5, 10, 15, 20, 30, 40, 50, 60, 80, 100] # all available sizes
+Rlist = [5, 10, 20, 30, 40, 60, 80, 100]
