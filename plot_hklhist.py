@@ -5,6 +5,7 @@ from settings import hist_bincenters, hist_binedges
 import helper
 
 runs = [3,4,7,8,9]
+runs = [4]
 
 xmin, xmax = hist_binedges[1][0], hist_binedges[1][-1]
 ymin, ymax = hist_binedges[0][0], hist_binedges[0][-1]
@@ -17,12 +18,15 @@ for run in runs:
     hist = np.load("data_hklmat/%s_hist.npy"%filename)
     counts = np.load("data_hklmat/%s_counts.npy"%filename)
     
-    if run == 7: # center between two peaks is at y = 0.0075, yind = 85
+    if run == 7: # center between two peaks is  at y = 0.0075, yind = 85
         hist1 = np.sum(hist[:,83:88,:], axis=1)
         counts1 = np.sum(counts[:,83:88,:], axis=1)
-    elif run == 9: # center between two peaks is at z = -0.0065, zind = 57
-        hist1 = np.sum(hist[:,:,55:60], axis=2)
-        counts1 = np.sum(counts[:,:,55:60], axis=2)
+    elif run == 9: # center between two peaks is at z = -0.008, zind = 54
+        hist1 = np.sum(hist[:,:,52:57], axis=2)
+        counts1 = np.sum(counts[:,:,52:57], axis=2)
+    elif run == 4: # center is at yind = 70, zind = 70 
+        hist1 = np.sum(hist[:,:,70:71], axis=2)
+        counts1 = np.sum(counts[:,:,70:71], axis=2)
     else: # center is at yind = 70, zind = 70 
         hist1 = np.sum(hist[:,:,68:73], axis=2)
         counts1 = np.sum(counts[:,:,68:73], axis=2)

@@ -1,5 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+plt.rc('font', family='serif', size=12)
+import matplotlib
+matplotlib.rcParams['mathtext.fontset'] = 'cm'
 from mpl_toolkits.axes_grid1 import ImageGrid
 import helper
 from settings import hist_bincenters, hist_binedges, a0_reciprocal
@@ -7,8 +10,8 @@ import pickle
 
 runs = [4, 3, 8, 9, 7]
 qarray = hist_bincenters[0]*a0_reciprocal
-xmin, xmax = hist_binedges[1][0], hist_binedges[1][-1]
-ymin, ymax = hist_binedges[0][0], hist_binedges[0][-1]
+xmin, xmax = hist_binedges[1][0]*a0_reciprocal, hist_binedges[1][-1]*a0_reciprocal
+ymin, ymax = hist_binedges[0][0]*a0_reciprocal, hist_binedges[0][-1]*a0_reciprocal
 ratios = pickle.load(open("ratios.pickle", 'rb'))
 
 fig, ax = plt.subplots(1, 1, figsize=(10,5))
@@ -18,31 +21,48 @@ inds = []
 for run in runs:
     filename = helper.getparam("filenames", run)
     sample = helper.getparam("samples", run)
-    data = np.load("data_hklmat/%s_interpolated.npy"%filename)
-    if sample in ["0.2dpa_ref"]: # flip lower half
-        data[:811, :] = np.fliplr(data[:811, :])
-    slices.append(data)
+    data_orig = np.load("data_hklmat/%s_interpolated.npy"%filename)
+    if run in [4]: # flip lower half
+        data_orig[:811, :] = np.fliplr(data_orig[:811, :])
+    if run in []: # flip upper half
+        data_orig[811:, :] = np.fliplr(data_orig[811:, :])
+
+    #if run != 4:
+    #    data_orig = data_orig/ratios[run]
+    slices.append(data_orig)
     
     resample_shape = (162, 10)
     qarray_plot = np.mean(qarray[:np.prod(resample_shape)].reshape(*resample_shape), axis=1)
-    if run == 7:
-        ind = 56 # 56 for -0.0065
-    elif run == 9:
-        ind = 55 # 55 for -0.0075
-    else:
-        ind = 50 # 50 for -0.010, 60 for -0.005, 80 for 0.005, 90 for 0.010 
-    inds.append(ind)
 
-    data = np.mean(data[:np.prod(resample_shape), ind-2:ind+3], \
-                        axis=1).reshape(*resample_shape)
-    if sample == "0.2dpa_ref":
+    if run in [3, 8]: # 0.2dpa, 0.6dpa
+        ind = [50] 
+            # 50 for -0.010, 60 for -0.005, 80 for 0.005, 90 for 0.010 
+    elif run == 4: # 0.2dpa_ref
+        ind = [50]
+    elif run == 7: # 5dpa
+        ind = [57] # 57 for -0.0065, 83 for 0.0065
+    elif run == 9: # 2dpa
+        ind = [58] # 58 for -0.006, 82 for 0.006
+    inds.append(ind[0])
+
+    data = np.zeros(resample_shape)
+    for i in ind:
+        data += np.mean(data_orig[:np.prod(resample_shape), i-2:i+3], \
+                            axis=1).reshape(*resample_shape)
+    data = data*1./len(ind)
+
+    if run == 4: # 0.2dpa_ref
         data0 = data
+        err_plot0 = np.std(data, axis=1)
+        #data_plot = np.mean(data, axis=1)
+        #np.savez("fit/run%d_data.npz"%run, qarray=qarray_plot, \
+        #         data=data_plot, err=err_plot)
+        #ax.errorbar(qarray_plot, qarray_plot**4*data_plot, \
+        #            yerr=qarray_plot**4*err_plot, fmt='-', lw=0.8, label=sample)
         continue
-    else:
-        data = data - data0
-        #data = data/ratios[run] - data0
 
-    err_plot = np.std(data, axis=1)
+    err_plot = (np.std(data, axis=1)**2+err_plot0**2)**0.5
+    data = data - data0
     data_plot = np.mean(data, axis=1)
     np.savez("fit/run%d_data.npz"%run, qarray=qarray_plot, \
              data=data_plot, err=err_plot)
@@ -51,6 +71,7 @@ for run in runs:
                 yerr=qarray_plot**4*err_plot, fmt='-', lw=0.8, label=sample)
 
 ax.set_ylim(-0.05, 0.15)
+ax.set_xlim(-0.6, 0.6)
 ax.axhline(y=0, color='k', ls='-', lw=0.5)
 ax.legend()
 ax.set_xlabel(r"$q$ $(\AA^{-1})$")
@@ -73,8 +94,9 @@ for i_run, ax in enumerate(grid):
                    vmin=vmin, vmax=vmax)
     print "%s, slice at %f" % (sample, hist_bincenters[1][inds[i_run]])
     ax.axvline(x=hist_bincenters[1][inds[i_run]], color='r', ls='--')
-    ax.set_xlabel("[001]")
-    ax.set_ylabel("[110]")
+    ax.set_xticks([-0.05, 0.05])
+    ax.set_xlabel(r"[001]")
+    ax.set_ylabel(r"[110] $(\AA^{-1})$")
     ax.set_title(sample)
 
 ax.cax.colorbar(im)

@@ -10,7 +10,7 @@ qarray = np.load("fit/run3_data.npz")['qarray']
 fit_inds = [0, 2] 
 for fit_ind in fit_inds:
     fig, ax = plt.subplots(1, 1, figsize=(14,5))
-    ls = {'int':'--', 'vac':':'}
+    ls = {'int':':', 'vac':'--'}
 
     for i_R, R in enumerate(Rlist):
         for looptype in ['int', 'vac']:
@@ -19,7 +19,7 @@ for fit_ind in fit_inds:
                     ls=ls[looptype], \
                     label=('%d'%R if looptype=='int' else ''))
 
-    ax.set_xlim(-0.8, 0.8)
+    ax.set_xlim(-0.5, 0.5)
     ax.set_ylim(0., 10.)
     ax.set_xlabel(r"$q$ $(\AA^{-1})$")
     ax.set_ylabel(r"$q^4 I/R^2$")
