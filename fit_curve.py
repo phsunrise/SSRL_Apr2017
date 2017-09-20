@@ -49,10 +49,12 @@ for run in runs:
     ax.set_ylim(0., 20.)
 
     ## range to be fitted
-    fitrg = (-0.5, 0.5)
+    fitrg = (-0.7, 0.7)
     indmin, indmax = np.searchsorted(q, fitrg)
 
-    fit_ind = (2 if run == 7 else 0)
+    #fit_ind = (2 if run == 7 else 0)
+    fit_ind = 0
+
     q4I_th = []
     c0 = []
     for looptype in ['int', 'vac']:
@@ -82,7 +84,7 @@ for run in runs:
 
     bounds = (-2.e-2, 2.e-2)
     res = scipy.optimize.curve_fit(difsq, np.arange(len(q4I)), q4I, \
-                    p0=c0, sigma=q4I_err, bounds=bounds)
+               p0=c0, sigma=q4I_err, absolute_sigma=True, bounds=bounds)
     for i in xrange(len(res[0])):
         print res[0][i], np.sqrt(res[1][i,i])
     print res[1]
@@ -164,11 +166,15 @@ for run in runs:
         cs_vac_err = np.sqrt(np.diag(res[1]))[len(Rlist):]
         tot_int = np.sum(np.array(Rlist)**2*np.pi/A_atom*cs_int)
         tot_int_err = np.sum((np.array(Rlist)**2*np.pi/A_atom*cs_int_err)**2)**0.5
+        R_ave_int = np.sqrt(np.sum(np.array(Rlist)**2*cs_int)/np.sum(cs_int))
         tot_vac = np.sum(np.array(Rlist)**2*np.pi/A_atom*cs_vac)
         tot_vac_err = np.sum((np.array(Rlist)**2*np.pi/A_atom*cs_vac_err)**2)**0.5
-        np.savez("fit/%s_cs.npz"%sample, cs_int=cs_int, cs_vac=cs_vac, cs_int_err=cs_int_err,\
-                 cs_vac_err=cs_vac_err, tot_int=tot_int, tot_int_err=tot_int_err, tot_vac=tot_vac,\
-                 tot_vac_err=tot_vac_err)
+        R_ave_vac = np.sqrt(np.sum(np.array(Rlist)**2*cs_vac)/np.sum(cs_vac))
+        np.savez("fit/%s_cs.npz"%sample, cs_int=cs_int, cs_vac=cs_vac, \
+                 cs_int_err=cs_int_err, cs_vac_err=cs_vac_err, \
+                 tot_int=tot_int, tot_int_err=tot_int_err, \
+                 tot_vac=tot_vac, tot_vac_err=tot_vac_err, \
+                 R_ave_int=R_ave_int, R_ave_vac=R_ave_vac)
         print "saved to %s_cs.npz"%sample
     savebutton.on_clicked(save)
 

@@ -15,6 +15,6 @@ for filename, t in zip(filenames, ts):
     data = data*1./t
     data = data.flatten()
     alldata = np.concatenate((alldata, data))
-    print np.mean(data), np.std(data)
+    print len(data), np.mean(data), np.std(data)
 
 print "all data:", np.mean(alldata), np.std(alldata)
