@@ -5,7 +5,7 @@ plt.rc('font', family='serif', size=12)
 import matplotlib
 matplotlib.rcParams['mathtext.fontset'] = 'cm'
 
-qarray = np.load("fit/run3_data.npz")['qarray']
+datadir = "fit/qperp_0p020/"
 
 fit_inds = [0, ] 
 for fit_ind in fit_inds:
@@ -14,10 +14,13 @@ for fit_ind in fit_inds:
 
     for i_R, R in enumerate(Rlist):
         for looptype in ['int', 'vac']:
-            data = np.load("fit/R%d_%d_%s.npz"%(R, fit_ind, looptype))['q4I']
+            _f = np.load(datadir+"R%d_%d_%s.npz"%(R, fit_ind, looptype))
+            data = _f['q4I']
+            q = _f['q']
             ff = np.load("fit/W_ff.npz")['ff']
             re = 2.8179e-5 # electron radius in Angstrom
-            ax.plot(qarray, data/R**2*(re*ff)**2*1.e5, color=Rlist_colors[i_R], \
+            #print len(q), len(data), len(ff)
+            ax.plot(q, data/R**2*(re*ff)**2*1.e5, color=Rlist_colors[i_R], \
                     ls=ls[looptype], \
                     label=(r"$R=%d\mathrm{\AA}$"%R if looptype=='int' else ''))
 

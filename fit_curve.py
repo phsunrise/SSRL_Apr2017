@@ -10,6 +10,8 @@ from matplotlib.widgets import Slider, Button
 import os
 
 runs = [3, 8, 9, 7] 
+theory_dir = "fit/qperp_0p020/"
+suffix = "qperp_0p020"
 
 ## here to calculate the factor that converts intensity to electron units
 ## the factor is: (atom number density)/sin(th)*(re/R)^2 * L
@@ -32,7 +34,7 @@ C = A1*A2 * P0 * airT
 np.save("fit/C.npy", C)
 
 for run in runs:
-    fdata = np.load("fit/run%d_data.npz"%(run))
+    fdata = np.load("fit/run%d_data_%s.npz"%(run, suffix))
     sample = helper.getparam("samples", run)
 
     q = fdata['qarray']
@@ -60,18 +62,24 @@ for run in runs:
     for looptype in ['int', 'vac']:
         for R in Rlist: 
             ## load theoretical data
-            _data = np.load("fit/R%d_%d_%s.npz"%(R, fit_ind, looptype))['q4I']
+            _data = np.load(theory_dir+"R%d_%d_%s.npz"%(R, fit_ind, looptype))['q4I']
             ## multiply by form factor
             _data *= np.load("fit/W_ff.npz")['ff']**2
+
+            ## rebin data from 1621 to 162
+            _data = _data[:1620].reshape(162, 10).mean(axis=1)
+
             q4I_th.append(_data)
             c0.append(10./np.max(_data[indmin:indmax]))
+
     q4I_th = np.array(q4I_th)
     c0 = np.array(c0)
     #if os.path.isfile("%s_cs.npy"%sample):
     #    print "reading initial coefficients from %s_cs.npy"%sample
     #    c0 = np.load("%s_cs.npy"%sample)[0]
     #c0 = np.array(c0)**0.5
-    ## the curve fitting procedure is as follows:
+
+    ## curve fitting procedure is as follows:
     ## for an array c = [c5_int, c10_int, ..., c50_int, c5_vac, ..., c50_vac],
     ## calculate the theoretical q4I values, then calculate the diffrence from
     ## actual data, sum the squares weighted by 1/err^2
