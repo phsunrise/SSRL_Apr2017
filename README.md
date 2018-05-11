@@ -94,3 +94,19 @@ for Linux/Unix:
 The first time you use the program, you will be prompted
     to enter a confirmation number by looking at a website. Please trust it
     and follow the instructions.
+
+
+## Data analysis codes
+Assuming that hklhist has been generated, run the following codes in sequence to
+get the final results. Positions of slices are defined in settings.py.
+
+* plot_hklhist_slices.py: plot and save the intensities along different slices
+for each run.
+
+* fit_curve.py: fit each slice, allowing manual adjustments. 
+The UI should be self-explanatory. Remember to change the "run" variable at the 
+beginning. Also, the least-squares error function allows adding penalty for certain
+types of fit (e.g. ``gaps`` in the concentrations).
+
+* plot_slicefit.py: plot the fit results. Also calculates average radii,
+total concentration, etc.
