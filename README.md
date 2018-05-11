@@ -106,7 +106,7 @@ for each run.
 * fit_curve.py: fit each slice, allowing manual adjustments. 
 The UI should be self-explanatory. Remember to change the "run" variable at the 
 beginning. Also, the least-squares error function allows adding penalty for certain
-types of fit (e.g. ``gaps`` in the concentrations).
+types of fit (e.g. "gaps" in the concentrations).
 
 * plot_slicefit.py: plot the fit results. Also calculates average radii,
 total concentration, etc.
