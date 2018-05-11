@@ -4,6 +4,8 @@ import helper
 from settings import hist_bincenters, hist_binedges
 import sys
 
+plt.ion()
+
 run = 9 
 
 filename = helper.getparam("filenames", run)

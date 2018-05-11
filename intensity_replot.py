@@ -39,13 +39,12 @@ for i_ind, ind in enumerate(inds):
         sample = helper.getparam("samples", run)
         data_orig = np.load("data_hklmat/%s_interpolated.npy"%filename)
 
-        '''
-        ## uncomment to enable flipping
+        ### flipping
         if run in [4]: # flip lower half
             data_orig[:811, :] = np.fliplr(data_orig[:811, :])
         if run in []: # flip upper half
             data_orig[811:, :] = np.fliplr(data_orig[811:, :])
-        '''
+        ###
 
         slices.append(data_orig)
         
@@ -111,8 +110,8 @@ for i_ind, ind in enumerate(inds):
                        vmin=vmin, vmax=vmax)
         print("%s, slice at %f" % (sample, hist_bincenters[1][ind]))
         #ax.axvline(x=hist_bincenters[1][inds[i_run]], color='r', ls='--')
-        '''
-        ## uncomment to enable flipping
+
+        ### flipping
         if run in [4]:
             ax.add_patch(Rectangle((hist_binedges[1][inds[i_run]-2]*a0_reciprocal, 0.), \
                  (hist_binedges[1][inds[i_run]+3]-hist_binedges[1][inds[i_run]-2])*a0_reciprocal, \
@@ -123,13 +122,11 @@ for i_ind, ind in enumerate(inds):
                  (0.-hist_binedges[0][0])*a0_reciprocal, \
                  linewidth=0, facecolor='r', alpha=0.5))
         else:
-        '''
-
-        ax.add_patch(Rectangle((hist_binedges[1][ind-2]*a0_reciprocal, \
-                      hist_binedges[0][0]*a0_reciprocal), \
-             (hist_binedges[1][ind+3]-hist_binedges[1][ind-2])*a0_reciprocal, \
-             (hist_binedges[0][-1]-hist_binedges[0][0])*a0_reciprocal, \
-             linewidth=0, facecolor='r', alpha=0.5))
+            ax.add_patch(Rectangle((hist_binedges[1][ind-2]*a0_reciprocal, \
+                         hist_binedges[0][0]*a0_reciprocal), \
+                 (hist_binedges[1][ind+3]-hist_binedges[1][ind-2])*a0_reciprocal, \
+                 (hist_binedges[0][-1]-hist_binedges[0][0])*a0_reciprocal, \
+                 linewidth=0, facecolor='r', alpha=0.5))
         ax.set_ylim(-0.5, 0.5)
         ax.set_xticks([-0.05, 0, 0.05])
         ax.set_xticklabels([-5, 0, 5])
@@ -141,4 +138,3 @@ for i_ind, ind in enumerate(inds):
     cbar.ax.set_yticklabels([r"$10^1$", r"$10^2$", r"$\geq 10^3$"])
     ax.cax.toggle_label(True)
     fig.savefig("plots/intensities_%d.pdf"%i_ind, bbox_inches='tight')
-    #plt.show()

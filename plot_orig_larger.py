@@ -1,6 +1,7 @@
 import numpy as np
 import pickle
 import matplotlib.pyplot as plt
+plt.ion()
 from settings import centralpix
 
 filenames = ["0p2dpaPristine_2dscan_1", "5dpa_2dscan_1"] # do not include "b_heimann"
@@ -57,4 +58,3 @@ ax1.plot(qarray, intensities[:,2]*(qarray**4), 'go--')
 #ax2.semilogy(attfacs, 'b-')
 #ax3 = ax1.twinx()
 #ax3.plot(times, 'g-')
-plt.show()

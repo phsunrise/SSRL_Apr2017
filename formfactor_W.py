@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import sys
 
 q0 = 5.612 # for (220), in Angstrom^-1
-q = np.load("fit/run3_data.npz")['qarray']
+#q = np.load("fit/run3_data.npz")['qarray']
+q = np.load("fit/qperp_0p020/R10_0_vac.npz")['q']
 x = (q + q0)/(4.*np.pi) # sin(tth/2)/lambda
 
 element = 'W'

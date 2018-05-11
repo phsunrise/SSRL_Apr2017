@@ -4,7 +4,7 @@ from settings import ar # active region on the detector, due to slit
 from settings import hist_binedges, e_mat
 import pickle
 
-run = 9
+run = 4 
 
 filename = helper.getparam("filenames", run)
 i_scan = 1

@@ -2,6 +2,7 @@ import numpy as np
 
 a0 = 3.1648
 a0_reciprocal = 2.*np.pi/a0
+A_atom = np.sqrt(2.)/4.*a0**2 # each atom occupies sqrt(2)/4*a0^2 area on loop plane
 
 plot_dir = "/home/phsun/Apr2017/plots/"
 imshape = (195, 487)
@@ -43,3 +44,32 @@ Rlist = np.array(Rlist)
 Rlist_colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', \
                 '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', \
                 '#bcbd22', '#17becf', 'm', 'k']
+R_edges = [2.5]
+for i in range(len(Rlist)-1):
+    R_edges.append((Rlist[i]+Rlist[i+1])/2.)
+R_edges.append(Rlist[-1]*2.-R_edges[-1])
+R_edges = np.array(R_edges)
+R_barwidth = R_edges[1:] - R_edges[:-1]
+
+## Weibull distribution
+def weib(x, l, k):
+    return 1.*k/l*(1.*x/l)**(k-1.)*np.exp(-(1.*x/l)**k)
+
+slices = [(42, 70, 'qperp_0p014'), # i_s = 0, (q[001], q[1-10]) = (-0.014, 0.000)
+          (56, 84, 'qperp_0p010'), # 1, (-0.007, 0.007)
+          (50, 70, 'qperp_0p010'), # 2, (-0.010, 0.000)
+          (56, 56, 'qperp_0p010'), # 3, (-0.007, -0.007)
+          (50, 90, 'qperp_0p014'), # 4, (-0.010, 0.010)
+          (50, 50, 'qperp_0p014'), # 5, (-0.010, -0.010)
+          (30, 70, 'qperp_0p020'), # 6, (-0.020, 0.000)
+          (42, 98, 'qperp_0p020'), # 7, (-0.014, 0.014)
+          (42, 42, 'qperp_0p020'), # 8, (-0.014, -0.014)
+          #(84, 84), # (0.007, 0.007) 
+          #(70, 90), # (0.000, 0.010)
+          #(90, 90), # (0.010, 0.010)
+          #(70, 98), # (0.000, 0.014)
+          #(90, 70), # (0.010, 0.000)
+          #(98, 70), # (0.014, 0.000)
+          #(70, 50), # (0.000, -0.010)
+          #(90, 50), # (0.010, -0.010)
+         ]

@@ -1,17 +1,22 @@
 import numpy as np
 import scipy.optimize 
-from settings import Rlist, Rlist_colors, a0
+from settings import a0, hist_bincenters, hist_binedges, a0_reciprocal
+from settings import Rlist, Rlist_colors, R_edges, R_barwidth
+from settings import slices
 import matplotlib.pyplot as plt
 plt.rc('font', family='serif', size=12)
+plt.ioff()
 import matplotlib
 matplotlib.rcParams['mathtext.fontset'] = 'cm'
 import helper
 from matplotlib.widgets import Slider, Button
 import os
 
-runs = [3, 8, 9, 7] 
-theory_dir = "fit/qperp_0p020/"
-suffix = "qperp_0p020"
+#runs = [3, 8, 9, 7] 
+run = 7 
+q = hist_bincenters[0][:1620].reshape(162, 10).mean(axis=1) * a0_reciprocal
+Rlist2 = np.concatenate((Rlist, Rlist))**2
+n_R = len(Rlist)
 
 ## here to calculate the factor that converts intensity to electron units
 ## the factor is: (atom number density)/sin(th)*(re/R)^2 * L
@@ -31,17 +36,44 @@ P0 = 1.247e12 # incoming flux, cps
 airT = 0.50077 # air transmission from sample to detector
 C = A1*A2 * P0 * airT
 ## diffuse scattering should be S_diff = I_diff / C
+
+## range to be fitted
+fitrg = (-0.7, 0.7)
+indmin, indmax = np.searchsorted(q, fitrg)
+q = q[indmin:indmax]
+C = C[indmin:indmax]
+np.save("fit/q.npy", q)
 np.save("fit/C.npy", C)
 
-for run in runs:
-    fdata = np.load("fit/run%d_data_%s.npz"%(run, suffix))
+## load run 4 data to estimate error
+intensities0 = np.zeros((len(slices), indmax-indmin))
+for i_s, (yind, zind, qperp) in enumerate(slices):
+    intensities0[i_s] = np.load("fit/run4_slice_%s.npy"%(i_s))
+intensities_err = (intensities0.max(axis=0) - intensities0.min(axis=0))*0.5
+
+for i_s, (yind, zind, qperp) in enumerate(slices):
+    print "slice %d, yind = %d, zind = %d, %s" % (i_s, yind, zind, qperp)
+    ## load theoretical data
+    theory_dir = "fit/%s/" % qperp
+    q4I_th = []
+    for looptype in ['int', 'vac']:
+        for R in Rlist: 
+            ## load theoretical data
+            _data = np.load(theory_dir+"R%d_0_%s.npz"%(R, looptype))['q4I']
+            ## multiply by form factor
+            ff = np.load("fit/W_ff.npz")['ff']
+            _data *= ff**2
+            q4I_th.append(_data)
+
+    q4I_th = np.array(q4I_th)[:, indmin:indmax]
+
+    filename_data = "fit/run%d_slice_%s.npy"%(run, i_s)
+    filename_cs = "fit/run%d_slice_%s_cs.npz"%(run, i_s)
+    intensities = np.load(filename_data)
     sample = helper.getparam("samples", run)
 
-    q = fdata['qarray']
-    data = fdata['data']
-    err = fdata['err']
-    q4I = q**4*data/C
-    q4I_err = q**4*err/C
+    q4I = q**4 * intensities / C
+    q4I_err = q**4 * intensities_err / C
 
     fig, ax = plt.subplots(1, 1, figsize=(15,7))
     plt.subplots_adjust(bottom=0.25)
@@ -50,71 +82,73 @@ for run in runs:
     ax.set_xlim(-0.7, 0.7)
     ax.set_ylim(0., 20.)
 
-    ## range to be fitted
-    fitrg = (-0.7, 0.7)
-    indmin, indmax = np.searchsorted(q, fitrg)
+    # initial coefficients
+    if os.path.isfile(filename_cs):
+        print "reading initial coefficients from %s" % filename_cs
+        _f = np.load(filename_cs)
+        c_init = np.concatenate((_f['cs_int'], _f['cs_vac']))
+        cR2_init = c_init * Rlist2
+    else:
+        cR2_init = np.ones(2*n_R)*1.e-8
 
-    #fit_ind = (2 if run == 7 else 0)
-    fit_ind = 0
-
-    q4I_th = []
-    c0 = []
-    for looptype in ['int', 'vac']:
-        for R in Rlist: 
-            ## load theoretical data
-            _data = np.load(theory_dir+"R%d_%d_%s.npz"%(R, fit_ind, looptype))['q4I']
-            ## multiply by form factor
-            _data *= np.load("fit/W_ff.npz")['ff']**2
-
-            ## rebin data from 1621 to 162
-            _data = _data[:1620].reshape(162, 10).mean(axis=1)
-
-            q4I_th.append(_data)
-            c0.append(10./np.max(_data[indmin:indmax]))
-
-    q4I_th = np.array(q4I_th)
-    c0 = np.array(c0)
-    #if os.path.isfile("%s_cs.npy"%sample):
-    #    print "reading initial coefficients from %s_cs.npy"%sample
-    #    c0 = np.load("%s_cs.npy"%sample)[0]
-    #c0 = np.array(c0)**0.5
-
-    ## curve fitting procedure is as follows:
+    ## least-squares fitting procedure is as follows:
     ## for an array c = [c5_int, c10_int, ..., c50_int, c5_vac, ..., c50_vac],
     ## calculate the theoretical q4I values, then calculate the diffrence from
     ## actual data, sum the squares weighted by 1/err^2
-    q = q[indmin:indmax]
-    q4I = q4I[indmin:indmax]
-    q4I_err = q4I_err[indmin:indmax]
-    q4I_th = q4I_th[:, indmin:indmax]
-    def difsq(ind, *c):
-        return np.abs(c).dot(q4I_th[:,ind])
+    def func(cR2):
+        c = np.abs(cR2) / Rlist2
+        diff = np.abs(np.abs(c).dot(q4I_th) - q4I) / q4I_err
+        # penalize "oscillating" concentrations
+        c1 = cR2[:n_R]/Rlist**2/R_barwidth # interstitial
+        c2 = cR2[n_R:]/Rlist**2/R_barwidth # vacancy
+        inc1 = c1[1:n_R] - c1[0:n_R-1]
+        inc2 = c2[1:n_R] - c2[0:n_R-1]
+        signs1 = np.sign(inc1[0:n_R-2]*inc1[1:n_R-1])
+        signs2 = np.sign(inc2[0:n_R-2]*inc2[1:n_R-1])
+        ## signs[i] = 1 if c[i:i+3] is monotonic
+        ##          = -1 if c[i:i+3] is not monotonic
+        ## penalty if having more than one peak or valley
+        ## the coefficient can be adjusted
+        pen = 10. * max(np.sum(signs1<0)-1, 0)
+        pen += 10. * max(np.sum(signs2<0)-1, 0)
+        pen *= 0.
+        ## also penalty if there are zeros
+        pen += 100. * (np.sum(c1 <= 1.e-14) + np.sum(c2 <= 1.e-14))
 
-    bounds = (-2.e-2, 2.e-2)
-    res = scipy.optimize.curve_fit(difsq, np.arange(len(q4I)), q4I, \
-               p0=c0, sigma=q4I_err, absolute_sigma=True, bounds=bounds)
-    for i in xrange(len(res[0])):
-        print res[0][i], np.sqrt(res[1][i,i])
-    print res[1]
+        return diff + pen
+
+    res0, cov, infodict, mesg, ier = scipy.optimize.leastsq(\
+                func, cR2_init, full_output=True)
+    ## res0 is c*R^2
+    ## get covariance & error of coefficients
+    s_sq = (infodict['fvec']**2).sum() / (len(infodict['fvec'])-len(res0))
+    res0_err = np.diag(cov * s_sq) ** 0.5
+    cs = np.abs(res0) / Rlist2
+    cs_err = np.abs(res0_err) / Rlist2
+    res = cs / np.concatenate((R_barwidth, R_barwidth))
+    res_err = cs_err / np.concatenate((R_barwidth, R_barwidth))
+    ## res is dc/dR
+
     print "int:"
     for i_R, R in enumerate(Rlist):
-        print "R = %3d:"%R, abs(res[0][i_R])
+        print "R = %3d: c = %.2e, dc/dR = %.2e" % (\
+                    R, cs[i_R], res[i_R])
     print "vac:"
     for i_R, R in enumerate(Rlist):
-        print "R = %3d:"%R, abs(res[0][i_R+len(Rlist)])
+        print "R = %3d: c = %.2e, dc/dR = %.2e" % (\
+                    R, cs[i_R+n_R], res[i_R+n_R])
 
-    l_sum, = ax.plot(q, np.abs(res[0]).dot(q4I_th), 'b-')
-    #ax.plot(q, np.abs(c0).dot(q4I_th), 'g-')
+    l_sum, = ax.plot(q, cs.dot(q4I_th), 'b-')
     lines = []
     for i_R, R in enumerate(Rlist):
-        l, = ax.plot(q, np.abs(res[0][i_R])*q4I_th[i_R], \
+        l, = ax.plot(q, cs[i_R]*q4I_th[i_R], \
                 color=Rlist_colors[i_R], \
-                ls=':', label='%3d, int, %.2e'%(R, abs(res[0][i_R])))
+                ls=':', label='%3d, int, %.2e'%(R, cs[i_R]))
         lines.append(l)
     for i_R, R in enumerate(Rlist):
-        l, = ax.plot(q, np.abs(res[0][i_R+len(Rlist)])*q4I_th[i_R+len(Rlist)], \
+        l, = ax.plot(q, cs[i_R+n_R]*q4I_th[i_R+n_R], \
             color=Rlist_colors[i_R], \
-            ls='--', label='%3d, vac, %.2e'%(R, abs(res[0][i_R+len(Rlist)])))
+            ls='--', label='%3d, vac, %.2e'%(R, cs[i_R+n_R]))
         lines.append(l)
 
     ax.set_xlabel(r"$q$ $(\AA^{-1})$")
@@ -132,27 +166,27 @@ for run in runs:
     for i_R, R in enumerate(Rlist):
         slider_axes.append(plt.axes([0.05, 0.02+i_R*0.02, 0.3, 0.01], \
                            facecolor=axcolor))
-        sliders.append(Slider(slider_axes[-1], "%d"%R, 0.0, 5.e-4/R**2, \
-                       valinit=abs(res[0][i_R])))
+        sliders.append(Slider(slider_axes[-1], "%d"%R, 0.0, 1.e-4/R**2, \
+                       valinit=res[i_R]))
     for i_R, R in enumerate(Rlist):
         slider_axes.append(plt.axes([0.45, 0.02+i_R*0.02, 0.3, 0.01], \
                            facecolor=axcolor))
-        sliders.append(Slider(slider_axes[-1], "%d"%R, 0.0, 5.e-4/R**2, \
-                       valinit=abs(res[0][i_R+len(Rlist)])))
+        sliders.append(Slider(slider_axes[-1], "%d"%R, 0.0, 1.e-4/R**2, \
+                       valinit=res[i_R+n_R]))
     
-    cs = abs(res[0][:])
-    np.abs(res[0]).dot(q4I_th)
     def update(val):
         for i_R, R in enumerate(Rlist):
-            cs[i_R] = sliders[i_R].val
+            res[i_R] = sliders[i_R].val
+            cs[i_R] = res[i_R] * R_barwidth[i_R]
             lines[i_R].set_ydata(cs[i_R]*q4I_th[i_R])
-            cs[i_R+len(Rlist)] = sliders[i_R+len(Rlist)].val
-            lines[i_R+len(Rlist)].set_ydata(sliders[i_R+len(Rlist)].val*q4I_th[i_R+len(Rlist)])
+            res[i_R+n_R] = sliders[i_R+n_R].val
+            cs[i_R+n_R] = res[i_R+n_R] * R_barwidth[i_R]
+            lines[i_R+n_R].set_ydata(cs[i_R+n_R]*q4I_th[i_R+n_R])
         l_sum.set_ydata(cs.dot(q4I_th))
         fig.canvas.draw_idle()
     for i_R, R in enumerate(Rlist):
         sliders[i_R].on_changed(update)
-        sliders[i_R+len(Rlist)].on_changed(update)
+        sliders[i_R+n_R].on_changed(update)
 
     resetax = plt.axes([0.8, 0.025, 0.1, 0.04])
     resetbutton = Button(resetax, 'Reset', color=axcolor, \
@@ -160,31 +194,48 @@ for run in runs:
     def reset(event):
         for i_R, R in enumerate(Rlist):
             sliders[i_R].reset()
-            sliders[i_R+len(Rlist)].reset()
+            sliders[i_R+n_R].reset()
     resetbutton.on_clicked(reset)
 
     saveax = plt.axes([0.8, 0.07, 0.1, 0.04])
     savebutton = Button(saveax, 'Save', color=axcolor, \
                          hovercolor='0.975')
     def save(event):
-        A_atom = np.sqrt(2.)/4.*a0**2 # each atom occupies sqrt(2)/4*a0^2 area on loop plane
-        cs_int = cs[:len(Rlist)]
-        cs_vac = cs[len(Rlist):]
-        cs_int_err = np.sqrt(np.diag(res[1]))[:len(Rlist)]
-        cs_vac_err = np.sqrt(np.diag(res[1]))[len(Rlist):]
-        tot_int = np.sum(np.array(Rlist)**2*np.pi/A_atom*cs_int)
-        tot_int_err = np.sum((np.array(Rlist)**2*np.pi/A_atom*cs_int_err)**2)**0.5
-        R_ave_int = np.sqrt(np.sum(np.array(Rlist)**2*cs_int)/np.sum(cs_int))
-        tot_vac = np.sum(np.array(Rlist)**2*np.pi/A_atom*cs_vac)
-        tot_vac_err = np.sum((np.array(Rlist)**2*np.pi/A_atom*cs_vac_err)**2)**0.5
-        R_ave_vac = np.sqrt(np.sum(np.array(Rlist)**2*cs_vac)/np.sum(cs_vac))
-        np.savez("fit/%s_cs.npz"%sample, cs_int=cs_int, cs_vac=cs_vac, \
-                 cs_int_err=cs_int_err, cs_vac_err=cs_vac_err, \
-                 tot_int=tot_int, tot_int_err=tot_int_err, \
-                 tot_vac=tot_vac, tot_vac_err=tot_vac_err, \
-                 R_ave_int=R_ave_int, R_ave_vac=R_ave_vac)
-        print "saved to %s_cs.npz"%sample
+        cs_int = cs[:n_R]
+        cs_vac = cs[n_R:]
+        cs_int_err = cs_err[:n_R] 
+        cs_vac_err = cs_err[n_R:]
+        np.savez(filename_cs, cs_int=cs_int, cs_vac=cs_vac, \
+                 cs_int_err=cs_int_err, cs_vac_err=cs_vac_err)
+        print "saved to %s" % filename_cs
     savebutton.on_clicked(save)
+
+    fitax = plt.axes([0.8, 0.115, 0.1, 0.04])
+    fitbutton = Button(fitax, 'Fit', color=axcolor, \
+                         hovercolor='0.975')
+    def fit(event):
+        global cs, cs_err, res, res_err
+        res0, cov, infodict, mesg, ier = scipy.optimize.leastsq(\
+                    func, res, full_output=True)
+        ## res0 is c*R^2
+        ## get covariance & error of coefficients
+        s_sq = (infodict['fvec']**2).sum() / (len(infodict['fvec'])-len(res0))
+        res0_err = np.diag(cov * s_sq) ** 0.5
+        cs = np.abs(res0) / Rlist2
+        cs_err = np.abs(res0_err) / Rlist2
+        res = cs / np.concatenate((R_barwidth, R_barwidth))
+        res_err = cs_err / np.concatenate((R_barwidth, R_barwidth))
+        ## res is dc/dR
+        ## update sliders
+        for i_R, R in enumerate(Rlist):
+            lines[i_R].set_ydata(cs[i_R]*q4I_th[i_R])
+            sliders[i_R].set_val(res[i_R])
+            lines[i_R+n_R].set_ydata(cs[i_R+n_R]*q4I_th[i_R+n_R])
+            sliders[i_R+n_R].set_val(res[i_R+n_R])
+        l_sum.set_ydata(cs.dot(q4I_th))
+        fig.canvas.draw_idle()
+        print "Fitting done"
+    fitbutton.on_clicked(fit)
 
     fig.savefig("plots/%s_fit.pdf"%sample)
     plt.show()
