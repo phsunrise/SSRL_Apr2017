@@ -16,6 +16,7 @@ import helper
 import os, sys
 from settings import ar # active region on the detector, due to slit 
 from settings import hist_binedges, e_mat
+import pickle
 
 runs = [3,4,7,8,9] 
 
@@ -59,11 +60,15 @@ for run in runs:
         try:
             for i_file in [0,1]:
                 print "starting scan %d, file %d" % (i_scan, i_file)
+                print "data_npz/%s_scan%d_%04d.npz"%(\
+                               filename, i_scan, i_file)
                 data = np.load("data_npz/%s_scan%d_%04d.npz"%(\
                                filename, i_scan, i_file))['data']
                 _, t, monitor, normlz, filters, pd3 = np.load("data_npz/%s_scan%d_%04d_add.npy"%(\
                                         filename, i_scan, i_file))
-                data = data*1./t*(monitor*normlz*1./pd3)
+                sinThetai = np.asscalar(np.load("data_npz/%s_scan%d_%04d_sinThetai.npy"%(\
+                                    filename, i_scan, i_file)))
+                data = data*1./t*(monitor*normlz*1./pd3)*sinThetai # correct for effect of incident angle theta_i
                 data = data[ar[0]:ar[1], ar[2]:ar[3]].flatten()
                 hkl = np.transpose(np.load("data_npz/%s_scan%d_%04d_hkl.npy"%(\
                                     filename, i_scan, i_file)), (1,2,0))

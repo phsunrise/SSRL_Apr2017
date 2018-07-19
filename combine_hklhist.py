@@ -1,7 +1,7 @@
 import numpy as np
 import helper
 
-runs = [5,6]
+#runs = [5,6]
 runs = [3,4,7,8,9]
 
 for run in runs:

@@ -11,9 +11,8 @@ for rank in xrange(nprocs):
         f.write("#SBATCH --job-name=hkl_%03d\n"%rank)
         f.write("#SBATCH --output=hkljob_%03d.out\n"%rank)
         f.write("#SBATCH --error=hkljob_%03d.err\n"%rank)
-        f.write("#SBATCH --time=0:30:00\n")
+        f.write("#SBATCH --time=1:00:00\n")
         f.write("#SBATCH --qos=normal\n")
-        f.write("#SBATCH --partition=iric\n")
         f.write("#SBATCH --nodes=1\n")
         f.write("#SBATCH --ntasks-per-node=1\n")
         if rank == nprocs-1:

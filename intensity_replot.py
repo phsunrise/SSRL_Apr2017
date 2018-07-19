@@ -1,140 +1,78 @@
 import numpy as np
-import matplotlib.pyplot as plt
-plt.rc('font', family='serif', size=12)
 import matplotlib
 matplotlib.rcParams['mathtext.fontset'] = 'cm'
+import matplotlib.pyplot as plt
+plt.rc('font', family='serif', size=12)
+plt.rcParams['xtick.top'] = plt.rcParams['ytick.right'] = True
+plt.ion()
 from matplotlib.patches import Rectangle
 from mpl_toolkits.axes_grid1 import ImageGrid
 import helper
-from settings import hist_bincenters, hist_binedges, a0_reciprocal
+from orimat import qvec
+from settings import e0, e1, e2, hist_bincenters, hist_binedges, a0_reciprocal
 
-#plt.ion()
+do_plotsurface = False # set to True to plot surface orientation
 
 runs = [4, 3, 8, 9, 7]
 qarray = hist_bincenters[0]*a0_reciprocal
 xmin, xmax = hist_binedges[1][0]*a0_reciprocal, hist_binedges[1][-1]*a0_reciprocal
 ymin, ymax = hist_binedges[0][0]*a0_reciprocal, hist_binedges[0][-1]*a0_reciprocal
 
-'''
-    ## uncomment the following to consider effect of multiple peaks
-    #if run in [3, 8]: # 0.2dpa, 0.6dpa
-    #    ind = [50] 
-    #        # 50 for -0.010 rlu, 60 for -0.005, 80 for 0.005, 90 for 0.010 
-    #elif run == 4: # 0.2dpa_ref
-    #    ind = [50]
-    #elif run == 7: # 5dpa
-    #    ind = [57] # 57 for -0.0065, 83 for 0.0065
-    #elif run == 9: # 2dpa
-    #    ind = [58] # 58 for -0.006, 82 for 0.006
-    ## not considering effect of multiple peaks
-    ind = 50
-'''
-inds = [30, 40, 50, 60, 80, 90, 100, 110] 
-        # for -0.020, -0.015, -0.010, -0.005, 0.005, 0.010, 0.015, 0.020 rlu
-for i_ind, ind in enumerate(inds):
-    fig, ax = plt.subplots(1, 1, figsize=(7,4))
-    slices = []
-    for run in runs:
-        filename = helper.getparam("filenames", run)
-        sample = helper.getparam("samples", run)
-        data_orig = np.load("data_hklmat/%s_interpolated.npy"%filename)
+## plot the 2d images
+fig = plt.figure(figsize=(6, 8))
+grid = ImageGrid(fig, 111, nrows_ncols=(1,5), axes_pad=0.15, \
+                 share_all=True, cbar_location='right', \
+                 cbar_mode='single', cbar_size="15%", cbar_pad=0.15)
+for i_run, run in enumerate(runs):
+    ax = grid[i_run]
+    filename = helper.getparam("filenames", run)
+    sample = helper.getparam("samples", runs[i_run])
+    orimat = np.load("orimats/%s.npy"%(helper.getparam("orimats", run)))
+    data_orig = np.load("data_hklmat/%s_interpolated_xy.npy"%filename)
+    im = ax.imshow(np.log10(data_orig), extent=[xmin, xmax, ymin, ymax], \
+                   origin='lower', interpolation='nearest', \
+                   vmax=3.0)
 
-        ### flipping
-        if run in [4]: # flip lower half
-            data_orig[:811, :] = np.fliplr(data_orig[:811, :])
-        if run in []: # flip upper half
-            data_orig[811:, :] = np.fliplr(data_orig[811:, :])
-        ###
+    if do_plotsurface:
+        surf_norm = orimat.dot(qvec(50., 25., 90., 0.))
+        surf_norm = surf_norm/np.linalg.norm(surf_norm)
+        print "hkl of surface =", surf_norm 
+        surf_norm = orimat.dot(qvec(60., 30., 90., 45.))
+        surf_norm = surf_norm/np.linalg.norm(surf_norm)
+        print "hkl of surface =", surf_norm, "(to check if th and phi matters)"
+        xx = np.array([-1., 1.]) * surf_norm.dot(e1)
+        yy = np.array([-1., 1.]) * surf_norm.dot(e0)
+        ax.plot(xx, yy, 'r--')
 
-        slices.append(data_orig)
-        
-        resample_shape = (162, 10)
-        qarray_plot = qarray[:np.prod(resample_shape)].reshape(*resample_shape).mean(axis=1)
+    #ax.axvline(x=hist_bincenters[1][inds[i_run]], color='r', ls='--')
 
-        data = data_orig[:np.prod(resample_shape), ind-2:ind+3]
-        data = data.mean(axis=1).reshape(*resample_shape)
-        np.savez("fit/run%d_data_%d.npz" % (run, i_ind), qarray=qarray_plot, \
-                 data=data.mean(axis=1), err=data.std(axis=1)/np.sqrt(resample_shape[1]))
+    ## indices: 30 -> -0.020rlu, 50 -> -0.010rlu, 
+    ##          90 -> 0.010rlu, 110 -> 0.020rlu
+    ### flipping
+    if run in [4]:
+        ax.add_patch(Rectangle((hist_binedges[1][30-2]*a0_reciprocal, 0.), \
+             (hist_binedges[1][50+3]-hist_binedges[1][30-2])*a0_reciprocal, \
+             (hist_binedges[0][-1]-0.)*a0_reciprocal, \
+             linewidth=0, facecolor='r', alpha=0.5))
+        ax.add_patch(Rectangle((hist_binedges[1][90-2]*a0_reciprocal, hist_binedges[0][0]*a0_reciprocal), \
+             (hist_binedges[1][110+3]-hist_binedges[1][90-2])*a0_reciprocal, \
+             (0.-hist_binedges[0][0])*a0_reciprocal, \
+             linewidth=0, facecolor='r', alpha=0.5))
+    else:
+        ax.add_patch(Rectangle((hist_binedges[1][30-2]*a0_reciprocal, \
+                     hist_binedges[0][0]*a0_reciprocal), \
+             (hist_binedges[1][50+3]-hist_binedges[1][30-2])*a0_reciprocal, \
+             (hist_binedges[0][-1]-hist_binedges[0][0])*a0_reciprocal, \
+             linewidth=0, facecolor='r', alpha=0.5))
+    ax.set_xlim(xmin, xmax)
+    ax.set_ylim(-0.5, 0.5)
+    ax.set_xticks([-0.05, 0, 0.05])
+    ax.set_xticklabels([-5, 0, 5])
+    ax.set_title(helper.getsamplename(sample))
 
-        if run == 4: # 0.2dpa_ref
-            data0 = data
-            err_plot0 = np.std(data, axis=1)/np.sqrt(resample_shape[1])
-            #data_plot = np.mean(data, axis=1)
-            #np.savez("fit/run%d_data.npz"%run, qarray=qarray_plot, \
-            #         data=data_plot, err=err_plot)
-            #ax.errorbar(qarray_plot, qarray_plot**4*data_plot, \
-            #            yerr=qarray_plot**4*err_plot, fmt='-', lw=0.8, label=sample)
-            continue
-
-        err_plot = ((np.std(data, axis=1)/np.sqrt(resample_shape[1]))**2+err_plot0**2)**0.5
-        data = data - data0
-
-        if sample == "0.6dpa":
-            fig_temp, ax_temp = plt.subplots(1,1)
-            ax_temp.plot(qarray[:1620], qarray[:1620]**4*data.reshape(1620))
-            ax_temp.set_ylim(0., 0.15)
-            ax_temp.set_xlim(-0.5, 0.5)
-            ax_temp.set_title(sample)
-
-        data_plot = np.mean(data, axis=1)
-        
-        ax.errorbar(qarray_plot, qarray_plot**4*data_plot, \
-                    yerr=qarray_plot**4*err_plot, fmt='-', lw=0.8, \
-                    label=helper.getsamplename(sample))
-        
-
-    ax.set_xlim(-0.7, 0.7)
-    ax.set_ylim(0., 0.2)
-    ax.legend()
-    ax.set_xlabel(r"$q$ $(\AA^{-1})$")
-    ax.set_ylabel(r"$q^4 I$")
-    fig.savefig("plots/q4I_%d.pdf"%i_ind, bbox_inches='tight')
-
-    ## plot the 2d images
-    fig = plt.figure(figsize=(6, 8))
-    grid = ImageGrid(fig, 111, nrows_ncols=(1,5), axes_pad=0.15, \
-                     share_all=True, cbar_location='right', \
-                     cbar_mode='single', cbar_size="15%", cbar_pad=0.15)
-    slices = np.log10(np.array(slices))
-    slices[slices<-1.e6] = np.nan
-    vmin, vmax = np.nanmin(slices), np.nanmax(slices)
-    vmax = 3.0 
-    print(vmin, vmax)
-    for i_run, run in enumerate(runs):
-        ax = grid[i_run]
-        filename = helper.getparam("filenames", run)
-        sample = helper.getparam("samples", runs[i_run])
-        data_orig = np.load("data_hklmat/%s_interpolated.npy"%filename)
-        im = ax.imshow(np.log10(data_orig), extent=[xmin, xmax, ymin, ymax], \
-                       origin='lower', interpolation='nearest', \
-                       vmin=vmin, vmax=vmax)
-        print("%s, slice at %f" % (sample, hist_bincenters[1][ind]))
-        #ax.axvline(x=hist_bincenters[1][inds[i_run]], color='r', ls='--')
-
-        ### flipping
-        if run in [4]:
-            ax.add_patch(Rectangle((hist_binedges[1][inds[i_run]-2]*a0_reciprocal, 0.), \
-                 (hist_binedges[1][inds[i_run]+3]-hist_binedges[1][inds[i_run]-2])*a0_reciprocal, \
-                 (hist_binedges[0][-1]-0.)*a0_reciprocal, \
-                 linewidth=0, facecolor='r', alpha=0.5))
-            ax.add_patch(Rectangle((hist_binedges[1][90-2]*a0_reciprocal, hist_binedges[0][0]*a0_reciprocal), \
-                 (hist_binedges[1][90+3]-hist_binedges[1][90-2])*a0_reciprocal, \
-                 (0.-hist_binedges[0][0])*a0_reciprocal, \
-                 linewidth=0, facecolor='r', alpha=0.5))
-        else:
-            ax.add_patch(Rectangle((hist_binedges[1][ind-2]*a0_reciprocal, \
-                         hist_binedges[0][0]*a0_reciprocal), \
-                 (hist_binedges[1][ind+3]-hist_binedges[1][ind-2])*a0_reciprocal, \
-                 (hist_binedges[0][-1]-hist_binedges[0][0])*a0_reciprocal, \
-                 linewidth=0, facecolor='r', alpha=0.5))
-        ax.set_ylim(-0.5, 0.5)
-        ax.set_xticks([-0.05, 0, 0.05])
-        ax.set_xticklabels([-5, 0, 5])
-        ax.set_ylabel(r"$q[110]$ $(\mathrm{\AA^{-1}})$")
-        ax.set_title(helper.getsamplename(sample))
-
-    fig.text(0.4, 0.1, r"$q[001]$ $(10^{-2}\mathrm{\AA^{-1}})$") # common x label
-    cbar = ax.cax.colorbar(im, ticks=[1., 2., 3.])
-    cbar.ax.set_yticklabels([r"$10^1$", r"$10^2$", r"$\geq 10^3$"])
-    ax.cax.toggle_label(True)
-    fig.savefig("plots/intensities_%d.pdf"%i_ind, bbox_inches='tight')
+fig.text(0.35, 0.04, r"$q(220)[001]$ $(10^{-2}\mathrm{\AA^{-1}})$") # common x label
+fig.text(0.015, 0.55, r"$q(220)[110]$ $(\mathrm{\AA^{-1}})$", rotation=90)
+cbar = ax.cax.colorbar(im, ticks=[1., 2., 3.])
+cbar.ax.set_yticklabels([r"$10^1$", r"$10^2$", r"$\geq 10^3$"])
+ax.cax.toggle_label(True)
+fig.savefig("plots/intensities.pdf", bbox_inches='tight')

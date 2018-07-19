@@ -25,6 +25,10 @@ def R(th, chi, phi):
                     [np.sin(phi), 0., np.cos(phi) ]])
     return R3*R2*R1
 
+## function to calculate ki vector for given angles 
+def kivec(tth, th, chi, phi):
+    return np.array(R(th, chi, phi)*np.matrix(ki).T).ravel()
+
 ## function to calculate q vector for a given pixel
 def qvec(tth, th, chi, phi, pix=centralpix):
     tth = tth*Degree

@@ -1,9 +1,11 @@
 import numpy as np
-import matplotlib.pyplot as plt
-plt.rc('font', family='serif', size=12)
 import matplotlib
 matplotlib.rcParams['mathtext.fontset'] = 'cm'
+import matplotlib.pyplot as plt
+plt.rc('font', family='serif', size=12)
+plt.rcParams['xtick.top'] = plt.rcParams['ytick.right'] = True
 from scipy import integrate
+from settings import hist_bincenters, a0_reciprocal
 
 data = np.genfromtxt("dpa_vs_z.csv", delimiter=',', skip_header=1)
 z = data[:,0]
@@ -24,6 +26,7 @@ ax.set_xlim(0., 2.)
 ax.set_ylim(0., 0.12)
 ax.set_xlabel(r"Depth $z$ $(\mathrm{\mu m})$")
 ax.set_ylabel("DPA")
+ax.tick_params(top='on', right='on')
 ax.legend()
 #ax.axhline(y=dpa_ave, color='r')
 fig.savefig("plots/dpa_vs_z.pdf", bbox_inches='tight')
@@ -31,13 +34,15 @@ fig.savefig("plots/dpa_vs_z.pdf", bbox_inches='tight')
 ## now generate array for L/sin(th)
 ##    = Integrate{ dpa/dpa_ave*exp(-2*mu*z/sin(th)) / sin(th) }
 q0 = 5.612 # for (220), in Angstrom^-1
-q = q0+np.load("fit/run3_data.npz")['qarray']
+q1 = hist_bincenters[0][:1620].reshape(162, 10).mean(axis=1) * a0_reciprocal
+q = q0 + q1
 sinth_array = q*1.23984/(4.*np.pi) # sin(th)
 mu = 0.1870 # micron^-1
 
 A2 = []
 for sinth in sinth_array:
-    integrand = dpa/dpa_ave * np.exp(-2.*mu*z/sinth) / sinth
+    ## NOTE: the overall sinth factor is taken care of in the hklhist script
+    integrand = dpa/dpa_ave * np.exp(-2.*mu*z/sinth)
     A2.append(integrate.simps(integrand, z))
 np.save("fit/A2.npy", A2)
     
