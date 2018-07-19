@@ -97,6 +97,13 @@ The first time you use the program, you will be prompted
 
 
 ## Data analysis codes
+To generate hklhist:
+* calchkl.py: calculate the hkl positions of each pixel at each detector position. Also calculates the sin(theta_i) value for each detector position.
+
+* hklhist.py: histograms the intensities, considering the sin(theta_i) factor. Usage is "python hklhist.py [i_block]", where [i_block] ranges from 0 to 9 (total 10 blocks).
+
+* combine_hklhist.py: as the name suggests.
+
 Assuming that hklhist has been generated, run the following codes in sequence to
 get the final results. Positions of slices are defined in settings.py.
 
